@@ -8,10 +8,10 @@
 // %%%%% FUNCTIONS DECLARATION %%%%%% //
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
-//initializes the matrix with random values
-void initializeMatrix(float **matrix, int n);
-//transposes the matrix
-void matTranspose(float **matrix, float **transpose, int n);
+//initializes the matrix with random values and makes it symmetric
+void initializeSymmetricMatrix(float **matrix, int n);
+//checks if the matrix is symmetric
+int checkSym(float **matrix, int n);
 //prints the matrix
 void printMatrix(float **matrix, int n);
 
@@ -41,66 +41,64 @@ int main(int argc, char *argv[]) {
 
     //Allocating memory for the matrices M and T
     float **M = (float **)malloc(matrix_size * sizeof(float *));
-    float **T = (float **)malloc(matrix_size * sizeof(float *));
     for (int i = 0; i < matrix_size; i++) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
-        T[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    //Initializing the completely casual matrix
-    initializeMatrix(M, matrix_size);
+    //Initializing the symmetric matrix
+    initializeSymmetricMatrix(M, matrix_size); 
 
     //Structure to store the time
     struct timeval start, end;
     long seconds, useconds;
     double time_taken;
 
-    //Transposing the matrix
+    //Checking matrix symmetry
     gettimeofday(&start, NULL);
-    matTranspose(M, T, matrix_size);
+    int isSymmetric = checkSym(M, matrix_size);
     gettimeofday(&end, NULL);
 
     seconds = end.tv_sec - start.tv_sec;
     useconds = end.tv_usec - start.tv_usec;
     time_taken = ((seconds) * 1000000 + useconds);
-    printf("Matrix transposition time: %f microseconds\n", time_taken);
+    printf("Symmetry check time: %f microseconds\n", time_taken);
+    printf("Matrix is %s symmetric\n", isSymmetric ? "" : "not ");
 
     //printf("Original Matrix:\n");
     //printMatrix(matrix, matrix_size);
-
-    //printf("Transposed Matrix:\n");
-    //printMatrix(transpose, matrix_size);
 
 
     //Freeing memory
     for (int i = 0; i < matrix_size; i++) {
         free(M[i]);
-        free(T[i]);
     }
-
     free(M);
-    free(T);
     
     return 0;
 }
 
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
-// %%%%%% FUNCTIONS DEFINITION %%%%%% //
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
-void initializeMatrix(float **matrix, int n) {
+
+
+
+int checkSym(float **matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            matrix[i][j] = (float)rand();
+            if (matrix[i][j] != matrix[j][i]) {
+                return 0;
+            }
         }
     }
+    return 1;
 }
 
-void matTranspose(float **matrix, float **transpose, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            transpose[j][i] = matrix[i][j];
+void initializeSymmetricMatrix(float **matrix, int n) {
+    for (int i = 0; i < n/2; i++) {
+        for (int j = 0; j < n/2; j++) {
+            float value = (float)rand();
+            matrix[i][j] = value;
+            matrix[j][i] = value;
         }
     }
 }

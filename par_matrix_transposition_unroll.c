@@ -98,9 +98,22 @@ void initializeMatrix(float **matrix, int n) {
 }
 
 void matTranspose(float **matrix, float **transpose, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+    const int blockSize = 10; // Block size for cache efficiency
+    
+    //Iterating over the blocks of 64 elements. 
+    //For each iteration we work over a chunk of rows and columns
+    for (int i = 0; i < n-(blockSize-1); i += blockSize) {
+        for (int j = 0; j < n-(blockSize-1); j += blockSize) {
             transpose[j][i] = matrix[i][j];
+            transpose[j + 1][i] = matrix[i][j + 1];
+            transpose[j + 2][i] = matrix[i][j + 2];
+            transpose[j + 3][i] = matrix[i][j + 3];
+            transpose[j + 4][i] = matrix[i][j + 4];
+            transpose[j + 5][i] = matrix[i][j + 5];
+            transpose[j + 6][i] = matrix[i][j + 6];
+            transpose[j + 7][i] = matrix[i][j + 7];
+            transpose[j + 8][i] = matrix[i][j + 8];
+            transpose[j + 9][i] = matrix[i][j + 9];
         }
     }
 }
