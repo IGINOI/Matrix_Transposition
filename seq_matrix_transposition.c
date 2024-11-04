@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include <windows.h>
 #include <time.h>
 
 
@@ -47,29 +47,38 @@ int main(int argc, char *argv[]) {
         T[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    //Initializing the completely casual matrix
-    initializeMatrix(M, matrix_size);
+    double total_time = 0.0;
 
-    //Structure to store the time
-    struct timeval start, end;
-    long seconds, useconds;
-    double time_taken;
+    for(int i = 0; i < 10; i++) {
+        // Initializing the completely casual matrix
+        initializeMatrix(M, matrix_size);
 
-    //Transposing the matrix
-    gettimeofday(&start, NULL);
-    matTranspose(M, T, matrix_size);
-    gettimeofday(&end, NULL);
+        // Structure to store the time
+        struct timeval start, end;
+        long seconds, microseconds;
+        double time_taken;
 
-    seconds = end.tv_sec - start.tv_sec;
-    useconds = end.tv_usec - start.tv_usec;
-    time_taken = ((seconds) * 1000000 + useconds);
-    printf("Matrix transposition time: %f microseconds\n", time_taken);
+        // Transposing the matrix
+        mingw_gettimeofday(&start, NULL);
+        matTranspose(M, T, matrix_size);
+        mingw_gettimeofday(&end, NULL);
 
-    //printf("Original Matrix:\n");
-    //printMatrix(matrix, matrix_size);
+        seconds = end.tv_sec - start.tv_sec;
+        microseconds = end.tv_usec - start.tv_usec;
+        time_taken = seconds + microseconds * 1e-6;
+        //printf("Matrix transposition time: %.3fms\n", time_taken / 1e-3);
 
-    //printf("Transposed Matrix:\n");
-    //printMatrix(transpose, matrix_size);
+        total_time += time_taken;
+    }
+
+    double avg_time = total_time / 10;
+    printf("Average matrix transposition time: %.3fms\n", avg_time / 1e-3);
+
+    // printf("Original Matrix:\n");
+    // printMatrix(M, matrix_size);
+
+    // printf("Transposed Matrix:\n");
+    // printMatrix(T, matrix_size);
 
 
     //Freeing memory
