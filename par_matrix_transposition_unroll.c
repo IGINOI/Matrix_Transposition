@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <sys/time.h>
+#endif
 #include <time.h>
 
 
@@ -47,9 +51,10 @@ int main(int argc, char *argv[]) {
         T[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
+    int total_iterations = 50;
     double total_time = 0.0;
 
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < total_iterations; i++) {
         // Initializing the completely casual matrix
         initializeMatrix(M, matrix_size);
 
@@ -59,9 +64,17 @@ int main(int argc, char *argv[]) {
         double time_taken;
 
         // Transposing the matrix
-        mingw_gettimeofday(&start, NULL);
+        #ifdef _WIN32
+            mingw_gettimeofday(&start, NULL);
+        #else
+            gettimeofday(&start, NULL);
+        #endif
         matTranspose(M, T, matrix_size);
-        mingw_gettimeofday(&end, NULL);
+        #ifdef _WIN32
+            mingw_gettimeofday(&end, NULL);
+        #else
+            gettimeofday(&end, NULL);
+        #endif
 
         seconds = end.tv_sec - start.tv_sec;
         microseconds = end.tv_usec - start.tv_usec;
@@ -71,7 +84,7 @@ int main(int argc, char *argv[]) {
         total_time += time_taken;
     }
 
-    double avg_time = total_time / 10;
+    double avg_time = total_time / total_iterations;
     printf("Average matrix transposition time: %.3fms\n", avg_time / 1e-3);
 
     //printf("Original Matrix:\n");
@@ -109,10 +122,11 @@ void initializeMatrix(float **matrix, int n) {
 void matTranspose(float **matrix, float **transpose, int n) {
     const int blockSize = 8; // Block size for cache efficiency
     
-    //Iterating over the blocks of 64 elements. 
+    //Iterating over the blocks of elements. 
     //For each iteration we work over a chunk of rows and columns
     for (int i = 0; i < n; i += 1) {
-        for (int j = 0; j < n-(blockSize-1); j += blockSize) {
+        int j;
+        for (j = 0; j < n - blockSize + 1; j += blockSize) {
             transpose[j][i] = matrix[i][j];
             transpose[j + 1][i] = matrix[i][j + 1];
             transpose[j + 2][i] = matrix[i][j + 2];
@@ -121,8 +135,9 @@ void matTranspose(float **matrix, float **transpose, int n) {
             transpose[j + 5][i] = matrix[i][j + 5];
             transpose[j + 6][i] = matrix[i][j + 6];
             transpose[j + 7][i] = matrix[i][j + 7];
-            //transpose[j + 8][i] = matrix[i][j + 8];
-            //transpose[j + 9][i] = matrix[i][j + 9];
+        }
+        for (; j < n; j++) {
+            transpose[j][i] = matrix[i][j];
         }
     }
 }
