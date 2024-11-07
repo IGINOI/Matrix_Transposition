@@ -88,10 +88,10 @@ int main(int argc, char *argv[]) {
     printf("Average matrix transposition time: %.3fms\n", avg_time / 1e-3);
 
     //printf("Original Matrix:\n");
-    //printMatrix(matrix, matrix_size);
+    //printMatrix(M, matrix_size);
 
     //printf("Transposed Matrix:\n");
-    //printMatrix(transpose, matrix_size);
+    //printMatrix(T, matrix_size);
 
 
     //Freeing memory
