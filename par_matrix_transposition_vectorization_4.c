@@ -121,8 +121,7 @@ void initializeMatrix(float **matrix, int n) {
 }
 
 void matTranspose(float** matrix, float** transpose, int n) {
-    const int blockSize = 8;  // Block size for AVX (4x4 block)
-
+    const int blockSize = 4;
     for (int i = 0; i < n; i += blockSize) {
         for (int j = 0; j < n; j += blockSize) {
             // loads 4 floats at time into row0, row1, row2, row3 --m128 registers

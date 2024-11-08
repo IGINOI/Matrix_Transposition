@@ -121,8 +121,7 @@ void initializeMatrix(float **matrix, int n) {
 }
 
 void matTranspose(float** matrix, float** transpose, int n) {
-    const int blockSize = 8;  // Block size for AVX (4x4 block)
-
+    const int blockSize = 8;
     for (int i = 0; i < n; i += blockSize) {
         for (int j = 0; j < n; j += blockSize) {
 
@@ -148,18 +147,51 @@ void matTranspose(float** matrix, float** transpose, int n) {
             __m256 tmp6 = _mm256_unpacklo_ps(row6, row7);
             __m256 tmp7 = _mm256_unpackhi_ps(row6, row7);
 
-
+            //Subdivide each row in rows of 4 floats
+            __m128 low_tmp0 = _mm256_castps256_ps128(tmp0);        // [0, 8, 1, 9]
+            __m128 high_tmp0 = _mm256_extractf128_ps(tmp0, 1);     // [4, 12, 5, 13]
+            __m128 low_tmp1 = _mm256_castps256_ps128(tmp1);        // [2, 10, 3, 11]
+            __m128 high_tmp1 = _mm256_extractf128_ps(tmp1, 1);     // [6, 14, 7, 15]
+            __m128 low_tmp2 = _mm256_castps256_ps128(tmp2);        // [16, 24, 17, 25]
+            __m128 high_tmp2 = _mm256_extractf128_ps(tmp2, 1);     // [20, 28, 21, 29]
+            __m128 low_tmp3 = _mm256_castps256_ps128(tmp3);        // [18, 26, 19, 27]
+            __m128 high_tmp3 = _mm256_extractf128_ps(tmp3, 1);     // [22, 30, 23, 31]
+            __m128 low_tmp4 = _mm256_castps256_ps128(tmp4);        // [32, 40, 33, 41]
+            __m128 high_tmp4 = _mm256_extractf128_ps(tmp4, 1);     // [36, 44, 37, 45]
+            __m128 low_tmp5 = _mm256_castps256_ps128(tmp5);        // [34, 42, 35, 43]
+            __m128 high_tmp5 = _mm256_extractf128_ps(tmp5, 1);     // [38, 46, 39, 47]
+            __m128 low_tmp6 = _mm256_castps256_ps128(tmp6);        // [48, 56, 49, 57]
+            __m128 high_tmp6 = _mm256_extractf128_ps(tmp6, 1);     // [52, 60, 53, 61]
+            __m128 low_tmp7 = _mm256_castps256_ps128(tmp7);        // [50, 58, 51, 59]
+            __m128 high_tmp7 = _mm256_extractf128_ps(tmp7, 1);     // [54, 62, 55, 63]
 
             // Rearrange the tmp register by interleaving the inputs lower and higher parts
-            __m256 col0 = _mm256_permute2f128_ps(tmp0, tmp2, 0x20);  //col0 will contain, in order, the lower part of tmp0 and lower part of tmp2
-            __m256 col1 = _mm256_permute2f128_ps(tmp2, tmp0, 0x20);  //col1 will contain, in order, the higher part of tmp0 and the higher part of tmp2
-            __m256 col2 = _mm256_permute2f128_ps(tmp1, tmp3, 0x31);
-            __m256 col3 = _mm256_permute2f128_ps(tmp3, tmp1, 0x31);
-            __m256 col4 = _mm256_permute2f128_ps(tmp4, tmp6, 0x20);
-            __m256 col5 = _mm256_permute2f128_ps(tmp6, tmp4, 0x20);
-            __m256 col6 = _mm256_permute2f128_ps(tmp5, tmp7, 0x31);
-            __m256 col7 = _mm256_permute2f128_ps(tmp7, tmp5, 0x31);
-
+            __m128 col0low = _mm_movelh_ps(low_tmp0, low_tmp2);
+            __m128 col0high = _mm_movelh_ps(low_tmp4, low_tmp6);
+            __m128 col1low = _mm_movehl_ps(low_tmp2, low_tmp0);
+            __m128 col1high = _mm_movehl_ps(low_tmp6, low_tmp4);
+            __m128 col2low = _mm_movelh_ps(low_tmp1, low_tmp3);
+            __m128 col2high = _mm_movelh_ps(low_tmp5, low_tmp7);
+            __m128 col3low = _mm_movehl_ps(low_tmp3, low_tmp1);
+            __m128 col3high = _mm_movehl_ps(low_tmp7, low_tmp5);
+            __m128 col4low = _mm_movelh_ps(high_tmp0, high_tmp2);
+            __m128 col4high = _mm_movelh_ps(high_tmp4, high_tmp6);
+            __m128 col5low = _mm_movehl_ps(high_tmp2, high_tmp0);
+            __m128 col5high = _mm_movehl_ps(high_tmp6, high_tmp4);
+            __m128 col6low = _mm_movelh_ps(high_tmp1, high_tmp3);
+            __m128 col6high = _mm_movelh_ps(high_tmp5, high_tmp7);
+            __m128 col7low = _mm_movehl_ps(high_tmp3, high_tmp1);
+            __m128 col7high = _mm_movehl_ps(high_tmp7, high_tmp5);
+            
+            // Merge together again the lower and higher parts of the columns
+            __m256 col0 = _mm256_set_m128(col0high, col0low);
+            __m256 col1 = _mm256_set_m128(col1high, col1low);   
+            __m256 col2 = _mm256_set_m128(col2high, col2low);
+            __m256 col3 = _mm256_set_m128(col3high, col3low);   
+            __m256 col4 = _mm256_set_m128(col4high, col4low);
+            __m256 col5 = _mm256_set_m128(col5high, col5low);
+            __m256 col6 = _mm256_set_m128(col6high, col6low);
+            __m256 col7 = _mm256_set_m128(col7high, col7low);
 
             // Store transposed block in the output matrix
             _mm256_storeu_ps(&transpose[j][i], col0);      // Store col0 in transpose[j][i]
