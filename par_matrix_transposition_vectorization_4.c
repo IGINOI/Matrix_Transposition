@@ -127,76 +127,30 @@ void matTranspose(float** matrix, float** transpose, int n) {
 
     for (int i = 0; i < n; i += blockSize) {
         for (int j = 0; j < n; j += blockSize) {
-            // // loads 4 floats at time into row0, row1, row2, row3 --m128 registers
-            // __m128 row0 = _mm_loadu_ps(&matrix[i][j]);  //row0 = (matrix[i][j], matrix[i][j+1], matrix[i][j+2], matrix[i][j+3])
-            // __m128 row1 = _mm_loadu_ps(&matrix[i + 1][j]);
-            // __m128 row2 = _mm_loadu_ps(&matrix[i + 2][j]);
-            // __m128 row3 = _mm_loadu_ps(&matrix[i + 3][j]);
-
-            // // Rearrange the rows, by interleaving the inputs lower and higher parts
-            // __m128 tmp0 = _mm_unpacklo_ps(row0, row1);  //tmp0 will contain the lower part of row0 and row1 interleaved
-            // __m128 tmp1 = _mm_unpackhi_ps(row0, row1);  //tmp1 will contain the higher part of row0 and row1 interleaved
-            // __m128 tmp2 = _mm_unpacklo_ps(row2, row3);
-            // __m128 tmp3 = _mm_unpackhi_ps(row2, row3);
-
-
-            // // Rearrange the tmp register by interleaving the inputs lower and higher parts
-            // __m128 col0 = _mm_movelh_ps(tmp0, tmp2);  //col0 will contain, in order, the lower part of tmp0 and lower part of tmp2
-            // __m128 col1 = _mm_movehl_ps(tmp2, tmp0);  //col1 will contain, in order, the higher part of tmp0 and the higher part of tmp2
-            // __m128 col2 = _mm_movelh_ps(tmp1, tmp3);
-            // __m128 col3 = _mm_movehl_ps(tmp3, tmp1);
-
-            // // Store transposed block in the output matrix
-            // _mm_storeu_ps(&transpose[j][i], col0);      // Store col0 in transpose[j][i]
-            // _mm_storeu_ps(&transpose[j + 1][i], col1);
-            // _mm_storeu_ps(&transpose[j + 2][i], col2);
-            // _mm_storeu_ps(&transpose[j + 3][i], col3);
-
-            // %%%%%%%%%%%% SAME REASONING BUT BIGGER REGISTER: __m256 %%%%%%%%%%%%
-            // %%%%%%%%%%%% to compile with flag -mavx2 that enables to use these type of instruction %%%%%%%%%%%%
-
             // loads 4 floats at time into row0, row1, row2, row3 --m128 registers
-            __m256 row0 = _mm256_loadu_ps(&matrix[i][j]);  //row0 = (matrix[i][j], matrix[i][j+1], matrix[i][j+2], matrix[i][j+3])
-            __m256 row1 = _mm256_loadu_ps(&matrix[i + 1][j]);
-            __m256 row2 = _mm256_loadu_ps(&matrix[i + 2][j]);
-            __m256 row3 = _mm256_loadu_ps(&matrix[i + 3][j]);
-            __m256 row4 = _mm256_loadu_ps(&matrix[i + 4][j]);
-            __m256 row5 = _mm256_loadu_ps(&matrix[i + 5][j]);
-            __m256 row6 = _mm256_loadu_ps(&matrix[i + 6][j]);
-            __m256 row7 = _mm256_loadu_ps(&matrix[i + 7][j]);
+            __m128 row0 = _mm_loadu_ps(&matrix[i][j]);  //row0 = (matrix[i][j], matrix[i][j+1], matrix[i][j+2], matrix[i][j+3])
+            __m128 row1 = _mm_loadu_ps(&matrix[i + 1][j]);
+            __m128 row2 = _mm_loadu_ps(&matrix[i + 2][j]);
+            __m128 row3 = _mm_loadu_ps(&matrix[i + 3][j]);
 
             // Rearrange the rows, by interleaving the inputs lower and higher parts
-            __m256 tmp0 = _mm256_unpacklo_ps(row0, row1);  //tmp0 will contain the lower part of row0 and row1 interleaved
-            __m256 tmp1 = _mm256_unpackhi_ps(row0, row1);  //tmp1 will contain the higher part of row0 and row1 interleaved
-            __m256 tmp2 = _mm256_unpacklo_ps(row2, row3);
-            __m256 tmp3 = _mm256_unpackhi_ps(row2, row3);
-            __m256 tmp4 = _mm256_unpacklo_ps(row4, row5);
-            __m256 tmp5 = _mm256_unpackhi_ps(row4, row5);
-            __m256 tmp6 = _mm256_unpacklo_ps(row6, row7);
-            __m256 tmp7 = _mm256_unpackhi_ps(row6, row7);
-
+            __m128 tmp0 = _mm_unpacklo_ps(row0, row1);  //tmp0 will contain the lower part of row0 and row1 interleaved
+            __m128 tmp1 = _mm_unpackhi_ps(row0, row1);  //tmp1 will contain the higher part of row0 and row1 interleaved
+            __m128 tmp2 = _mm_unpacklo_ps(row2, row3);
+            __m128 tmp3 = _mm_unpackhi_ps(row2, row3);
 
 
             // Rearrange the tmp register by interleaving the inputs lower and higher parts
-            __m256 col0 = _mm256_permute2f128_ps(tmp0, tmp2, 0x20);  //col0 will contain, in order, the lower part of tmp0 and lower part of tmp2
-            __m256 col1 = _mm256_permute2f128_ps(tmp2, tmp0, 0x20);  //col1 will contain, in order, the higher part of tmp0 and the higher part of tmp2
-            __m256 col2 = _mm256_permute2f128_ps(tmp1, tmp3, 0x31);
-            __m256 col3 = _mm256_permute2f128_ps(tmp3, tmp1, 0x31);
-            __m256 col4 = _mm256_permute2f128_ps(tmp4, tmp6, 0x20);
-            __m256 col5 = _mm256_permute2f128_ps(tmp6, tmp4, 0x20);
-            __m256 col6 = _mm256_permute2f128_ps(tmp5, tmp7, 0x31);
-            __m256 col7 = _mm256_permute2f128_ps(tmp7, tmp5, 0x31);
-
+            __m128 col0 = _mm_movelh_ps(tmp0, tmp2);  //col0 will contain, in order, the lower part of tmp0 and lower part of tmp2
+            __m128 col1 = _mm_movehl_ps(tmp2, tmp0);  //col1 will contain, in order, the higher part of tmp0 and the higher part of tmp2
+            __m128 col2 = _mm_movelh_ps(tmp1, tmp3);
+            __m128 col3 = _mm_movehl_ps(tmp3, tmp1);
 
             // Store transposed block in the output matrix
-            _mm256_storeu_ps(&transpose[j][i], col0);      // Store col0 in transpose[j][i]
-            _mm256_storeu_ps(&transpose[j + 1][i], col1);
-            _mm256_storeu_ps(&transpose[j + 2][i], col2);
-            _mm256_storeu_ps(&transpose[j + 3][i], col3);
-            _mm256_storeu_ps(&transpose[j + 4][i], col4);
-            _mm256_storeu_ps(&transpose[j + 5][i], col5);
-            _mm256_storeu_ps(&transpose[j + 6][i], col6);
-            _mm256_storeu_ps(&transpose[j + 7][i], col7);
+            _mm_storeu_ps(&transpose[j][i], col0);      // Store col0 in transpose[j][i]
+            _mm_storeu_ps(&transpose[j + 1][i], col1);
+            _mm_storeu_ps(&transpose[j + 2][i], col2);
+            _mm_storeu_ps(&transpose[j + 3][i], col3);
         }
     }
 }
