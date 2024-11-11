@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Replication](#replication)
+- [FileExplaination](#fileexplaination)
 - [Contact](#contact)
 
 ## Replication
@@ -41,6 +42,15 @@ I worked in two different enviroments. The idea was also to look at the differen
 ### UNITN Cluster
 The version of gcc used to compile here is 9.1
 
+## File Explaination
+* Matrix Transposition files
+    * seq_matrix_transposition.c: this file contains the sequential code for the matrix transposition
+    * par_matrix_transposition_unroll.c:
+    * par_matrix_transposition_vectorization_4.c:
+    * par_matrix_transposition_vectorization_8.c: this file uses explicit parallilazion using Instrinsics functions 
+    * par_matrix_transposition_openmp.c: this file uses implicit parallelization through OPENMP
+* Matrix Symmetry Check files
+    * seq_matrix_sym_check.c: 
 
 ## Contact
 email: davide.facchinelli@studenti.unitn.it
