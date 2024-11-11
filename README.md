@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - [Replication](#replication)
-- [FileExplaination](#fileexplaination)
+- [Files Explanation](#file-explanation)
 - [Contact](#contact)
 
 ## Replication
@@ -42,7 +42,7 @@ I worked in two different enviroments. The idea was also to look at the differen
 ### UNITN Cluster
 The version of gcc used to compile here is 9.1
 
-## File Explaination
+## Files Explanation
 * Matrix Transposition files
     * seq_matrix_transposition.c: this file contains the sequential code for the matrix transposition
     * par_matrix_transposition_unroll.c:
