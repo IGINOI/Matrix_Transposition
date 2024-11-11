@@ -3,7 +3,7 @@
 ## Table of Contents
 
 - [Replication](#replication)
-- [Files Explanation](#file-explanation)
+- [Files Explanation](#files-explanation)
 - [Contact](#contact)
 
 ## Replication
