@@ -44,13 +44,30 @@ The version of gcc used to compile here is 9.1
 
 ## Files Explanation
 * Matrix Transposition files
-    * seq_matrix_transposition.c: this file contains the sequential code for the matrix transposition
-    * par_matrix_transposition_unroll.c:
-    * par_matrix_transposition_vectorization_4.c:
-    * par_matrix_transposition_vectorization_8.c: this file uses explicit parallilazion using Instrinsics functions 
+    * seq_matrix_transposition.c: 
+        * description: this file contains the sequential code for the matrix transposition
+        * compilation: gcc seq_matrix_transposition.c -O0
+        * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
+    * par_matrix_transposition_unroll.c: 
+        * description: this file contains the explicit optimization using loop unrolling
+        * compilation: gcc par_matrix_transposition_unroll.c -O0
+        * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
+    * par_matrix_transposition_vectorization_4.c: 
+        * description: this file contains the explicit parallelization using vectorization of blocks 4*4
+        * compilation: gcc par_matrix_transposition_vectorization_4.c -O0
+        * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
+    * par_matrix_transposition_vectorization_8.c: 
+        * description: this file uses explicit parallilazion using vectorization of blocks 8*8 
+        * compilation: gcc par_matrix_transposition_vectorization_8.c -O0 -mavx2
+        * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
     * par_matrix_transposition_openmp.c: this file uses implicit parallelization through OPENMP
+        * compilation: gcc par_matrix_transposition_openmp.c -O0 -fopenmp
+        * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
 * Matrix Symmetry Check files
     * seq_matrix_sym_check.c: 
+        * description: thid file contains the sequential code for the matrix symmetry check
+        * compilation: gcc seq_matrix_sym_check.c -O0
+        * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
 
 ## Contact
 email: davide.facchinelli@studenti.unitn.it

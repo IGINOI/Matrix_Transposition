@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <sys/time.h>
+#endif
 #include <time.h>
 
 
@@ -54,9 +58,17 @@ int main(int argc, char *argv[]) {
     double time_taken;
 
     //Checking matrix symmetry
-    gettimeofday(&start, NULL);
+    #ifdef _WIN32
+        mingw_gettimeofday(&start, NULL);
+    #else
+        gettimeofday(&start, NULL);
+    #endif
     int isSymmetric = checkSym(M, matrix_size);
-    gettimeofday(&end, NULL);
+    #ifdef _WIN32
+        mingw_gettimeofday(&end, NULL);
+    #else
+        gettimeofday(&end, NULL);
+    #endif
 
     seconds = end.tv_sec - start.tv_sec;
     useconds = end.tv_usec - start.tv_usec;
