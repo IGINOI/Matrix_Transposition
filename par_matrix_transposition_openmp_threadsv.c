@@ -54,48 +54,49 @@ int main(int argc, char *argv[]) {
 
     
     
-    //Set ht e number of threads
-    omp_set_num_threads(8);
+    for(int n = 2; n < 16; n+=1) {
+        //Setting for the number of threads
+        omp_set_num_threads(n);
+        printf("We are currently running the simulation with %d threads \n", n);
 
-    //Set the number of iterations to get a better average time
-    int total_iterations = 50;
-    double total_time = 0.0;
+        //Set the number of iterations to get a better average time
+        int total_iterations = 50;
+        double total_time = 0.0;
 
-    for(int i = 0; i < total_iterations; i++) {
-        // Initializing the completely casual matrix
-        initializeMatrix(M, matrix_size);
+        for(int i = 0; i < total_iterations; i++) {
+            // Initializing the completely casual matrix
+            initializeMatrix(M, matrix_size);
 
-        // Structure to store the time
-        struct timeval start, end;
-        long seconds, microseconds;
-        double time_taken;
+            // Structure to store the time
+            struct timeval start, end;
+            long seconds, microseconds;
+            double time_taken;
 
-        // Transposing the matrix
-        #ifdef _WIN32
-            mingw_gettimeofday(&start, NULL);
-        #else
-            gettimeofday(&start, NULL);
-        #endif
+            // Transposing the matrix
+            #ifdef _WIN32
+                mingw_gettimeofday(&start, NULL);
+            #else
+                gettimeofday(&start, NULL);
+            #endif
 
-        matTranspose(M, T, matrix_size);
-        
-        #ifdef _WIN32
-            mingw_gettimeofday(&end, NULL);
-        #else
-            gettimeofday(&end, NULL);
-        #endif
+            matTranspose(M, T, matrix_size);
+            
+            #ifdef _WIN32
+                mingw_gettimeofday(&end, NULL);
+            #else
+                gettimeofday(&end, NULL);
+            #endif
 
-        //Time elapsed calculation
-        seconds = end.tv_sec - start.tv_sec;
-        microseconds = end.tv_usec - start.tv_usec;
-        time_taken = seconds + microseconds * 1e-6;
-        total_time += time_taken;
+            //Time elapsed calculation
+            seconds = end.tv_sec - start.tv_sec;
+            microseconds = end.tv_usec - start.tv_usec;
+            time_taken = seconds + microseconds * 1e-6;
+            total_time += time_taken;
+        }
+
+        double avg_time = total_time / total_iterations;
+        printf("%.3f\n", avg_time / 1e-3);
     }
-
-    //computing the average time
-    double avg_time = total_time / total_iterations;
-    printf("%.3f\n", avg_time / 1e-3);
-    
     // printf("Original Matrix:\n");
     // printMatrix(M, matrix_size);
 
@@ -129,13 +130,10 @@ void initializeMatrix(float **matrix, int n) {
 }
 
 void matTranspose(float **matrix, float **transpose, int n) {
-    #pragma omp parallel 
-    {
-        #pragma omp for collapse(2) schedule(static,4)
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                transpose[j][i] = matrix[i][j];
-            }
+    #pragma omp parallel for
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            transpose[j][i] = matrix[i][j];
         }
     }
 }

@@ -3,6 +3,8 @@
 ## Table of Contents
 
 - [Replication](#replication)
+    - [Windows Machine](#windows-machine)
+    - [Unitn Cluster](#unitn-cluster)
 - [Files Explanation](#files-explanation)
 - [Contact](#contact)
 
@@ -61,7 +63,7 @@ The version of gcc used to compile here is 9.1
         * compilation: gcc par_matrix_transposition_vectorization_8.c -O0 -mavx2
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
     * par_matrix_transposition_openmp.c: this file uses implicit parallelization through OPENMP
-        * compilation: gcc par_matrix_transposition_openmp.c -O0 -fopenmp
+        * compilation: gcc par_matrix_transposition_openmp.c -fopenmp
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
 * Matrix Symmetry Check files
     * seq_matrix_sym_check.c: 

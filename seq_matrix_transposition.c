@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
         T[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
+    //Set the number of iterations to get a better average time
     int total_iterations = 50;
     double total_time = 0.0;
 
@@ -69,18 +70,19 @@ int main(int argc, char *argv[]) {
         #else
             gettimeofday(&start, NULL);
         #endif
+
         matTranspose(M, T, matrix_size);
+        
         #ifdef _WIN32
             mingw_gettimeofday(&end, NULL);
         #else
             gettimeofday(&end, NULL);
         #endif
 
+        //Time elapsed calculation
         seconds = end.tv_sec - start.tv_sec;
         microseconds = end.tv_usec - start.tv_usec;
         time_taken = seconds + microseconds * 1e-6;
-        //printf("Matrix transposition time: %.3fms\n", time_taken / 1e-3);
-
         total_time += time_taken;
     }
 
