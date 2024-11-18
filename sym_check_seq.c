@@ -49,36 +49,49 @@ int main(int argc, char *argv[]) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    //Initializing the symmetric matrix
-    initializeSymmetricMatrix(M, matrix_size); 
+    //Set the number of iterations to get a better average time
+    int total_iterations = 50;
+    double total_time = 0.0;
 
-    //Structure to store the time
-    struct timeval start, end;
-    long seconds, useconds;
-    double time_taken;
+    for(int i = 0; i < total_iterations; i++) {
+        printf("Iteration %d \n", i);
+        //Initializing the symmetric matrix
+        initializeSymmetricMatrix(M, matrix_size); 
 
-    //Checking matrix symmetry
-    #ifdef _WIN32
-        mingw_gettimeofday(&start, NULL);
-    #else
-        gettimeofday(&start, NULL);
-    #endif
-    int isSymmetric = checkSym(M, matrix_size);
-    #ifdef _WIN32
-        mingw_gettimeofday(&end, NULL);
-    #else
-        gettimeofday(&end, NULL);
-    #endif
+        // Structure to store the time
+        struct timeval start, end;
+        long seconds, microseconds;
+        double time_taken;
 
-    seconds = end.tv_sec - start.tv_sec;
-    useconds = end.tv_usec - start.tv_usec;
-    time_taken = ((seconds) * 1000000 + useconds);
-    printf("Symmetry check time: %f microseconds\n", time_taken);
-    printf("Matrix is %s symmetric\n", isSymmetric ? "" : "not ");
+        //Checking matrix symmetry
+        #ifdef _WIN32
+            mingw_gettimeofday(&start, NULL);
+        #else
+            gettimeofday(&start, NULL);
+        #endif
+        
+        int isSymmetric = checkSym(M, matrix_size);
+        
+        #ifdef _WIN32
+            mingw_gettimeofday(&end, NULL);
+        #else
+            gettimeofday(&end, NULL);
+        #endif
 
-    //printf("Original Matrix:\n");
-    //printMatrix(matrix, matrix_size);
+        printf("Matrix is %s\n", isSymmetric ? "symmetric" : "not symmetric");
 
+        //Time elapsed calculation
+        seconds = end.tv_sec - start.tv_sec;
+        microseconds = end.tv_usec - start.tv_usec;
+        time_taken = seconds + microseconds / 1e6;
+        total_time += time_taken;
+    }
+    
+    double avg_time = total_time / total_iterations;
+    printf("Average symmetry check time: %.3fms\n", avg_time * 1e3);
+
+    // printf("Original Matrix:\n");
+    // printMatrix(M, matrix_size);
 
     //Freeing memory
     for (int i = 0; i < matrix_size; i++) {
@@ -90,13 +103,13 @@ int main(int argc, char *argv[]) {
 }
 
 
-
-
-
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
+// %%%%%% FUNCTIONS DEFINITION %%%%%% //
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 int checkSym(float **matrix, int n) {
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; j < i; j++) {
             if (matrix[i][j] != matrix[j][i]) {
                 return 0;
             }
@@ -106,8 +119,8 @@ int checkSym(float **matrix, int n) {
 }
 
 void initializeSymmetricMatrix(float **matrix, int n) {
-    for (int i = 0; i < n/2; i++) {
-        for (int j = 0; j < n/2; j++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j <= i; j++) {
             float value = (float)rand();
             matrix[i][j] = value;
             matrix[j][i] = value;
