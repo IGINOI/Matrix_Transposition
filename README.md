@@ -14,32 +14,15 @@ I worked in two different enviroments. The idea was also to look at the differen
 ### Windows Machine
 #### Machine Specification
 * Hardware:
-    * CPU: Intel Core i7-9700K, 8 cores, 3.6 GHz.
-    * RAM: 16 GB DDR4.
+    * CPU: Intel(R) Core(TM) i7-1165G7, 4 cores, Base speer: 2.8 GHz .
+    * RAM: 16 GB.
     * Storage: 512 GB SSD with 200 GB free.
-    * GPU: NVIDIA GeForce GTX 1660, Driver version 472.12.
 * Operating System:
-    * Name and Version: Windows 10 Pro, version 22H2.
+    * Name and Version: Windows 11, version 23H2.
     * Architecture: 64-bit.
 * Software Environment
-    * Compiler/IDE:
-        * Compiler: GCC 11.2.0 via MinGW-w64.
-        * IDE: Code::Blocks 20.03, with default compiler settings.
-    * Libraries and Dependencies:
-        * Boost 1.75.0, installed via vcpkg.
-        * OpenCV 4.5.3, installed via vcpkg.
-    * Build System:
-        * Using CMake 3.21.2 for building the project.
-        * CMake command: cmake -S . -B build and cmake --build build.
-* Environment Variables and Configuration
-    * Environment Variables:
-        * PATH includes C:\Program Files\CMake\bin;C:\Program Files\mingw-w64\bin.
-* Data Input and Output
-    * Input Data:
-        * Input data file format: CSV, with columns [A, B, C].
-        * Example file: data/input.csv located in the project root.
-    * Output Data:
-        * Output file format: JSON, results are stored in results/output.json.
+    * Compiler:
+        * Compiler: GCC 13.2.0 via MinGW-w64 (Built by MSYS2 project).
 
 ### UNITN Cluster
 The version of gcc used to compile here is 9.1
@@ -54,15 +37,15 @@ The version of gcc used to compile here is 9.1
         * description: this file contains the explicit optimization using loop unrolling
         * compilation: gcc par_matrix_transposition_unroll.c -O0
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
-    * [transposition_vectorization_4](transposition_vectorization_4.c): 
+    * [transposition_vectorization_4.c](transposition_vectorization_4.c): 
         * description: this file contains the explicit parallelization using vectorization of blocks 4*4
         * compilation: gcc par_matrix_transposition_vectorization_4.c -O0
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
-    * [transposition_vectorization_8](transposition_vectorization_8.c): 
+    * [transposition_vectorization_8.c](transposition_vectorization_8.c): 
         * description: this file uses explicit parallilazion using vectorization of blocks 8*8 
         * compilation: gcc par_matrix_transposition_vectorization_8.c -O0 -mavx2
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
-    * [transposition_openmp](transposition_openmp.c)
+    * [transposition_openmp.c](transposition_openmp.c)
         * description: this file contains implicit parallelization through openMP
         * compilation: gcc par_matrix_transposition_openmp.c -fopenmp
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
@@ -84,11 +67,11 @@ The version of gcc used to compile here is 9.1
         * compilation: gcc sym_check_vectorization_4.c -O0
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
     * [sym_check_vectorization_8.c](sym_check_vectorization_8.c):
-    * description: this file contains the explicit parallelization using vectorization of array of 8 items
-        * compilation: gcc sym_check_vectorization_8.c -O0
+        * description: this file contains the explicit parallelization using vectorization of array of 8 items
+        * compilation: gcc sym_check_vectorization_8.c -O0 -mavx2
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
     * [sym_check_openmp.c](sym_check_openmp.c):
-    * description: this file contains implicit parallelization through openMP
+        * description: this file contains implicit parallelization through openMP
         * compilation: gcc sym_check_openmp.c -O0
         * run: .\a.exe 2 -> .\a.exe 12 or ./a.out 2 -> ./a.out 12
     * [sym_check_openmp_threadsv.c](sym_check_openmp_threadsv.c):
