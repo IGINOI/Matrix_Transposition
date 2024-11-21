@@ -50,12 +50,14 @@ int main(int argc, char *argv[]) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
+    omp_set_num_threads(8);
+
     //Set the number of iterations to get a better average time
     int total_iterations = 50;
     double total_time = 0.0;
 
     for(int i = 0; i < total_iterations; i++) {
-        printf("Iteration %d \n", i);
+        //printf("Iteration %d \n", i);
         //Initializing the symmetric matrix
         initializeSymmetricMatrix(M, matrix_size); 
 
@@ -79,7 +81,7 @@ int main(int argc, char *argv[]) {
             gettimeofday(&end, NULL);
         #endif
 
-        printf("Matrix is %s\n", isSymmetric ? "symmetric" : "not symmetric");
+        //printf("Matrix is %s\n", isSymmetric ? "symmetric" : "not symmetric");
 
         //Time elapsed calculation
         seconds = end.tv_sec - start.tv_sec;
@@ -109,14 +111,17 @@ int main(int argc, char *argv[]) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 int checkSym(float **matrix, int n) {
+    int isSymmetric = 1;
+    #pragma omp parallel for reduction(&:isSymmetric) schedule(static, 8)
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < i; j++) {
+        #pragma omp simd
+        for (int j = 0; j < n; j++) {
             if (matrix[i][j] != matrix[j][i]) {
-                return 0;
+                isSymmetric = 0;
             }
         }
     }
-    return 1;
+    return isSymmetric;
 }
 
 void initializeSymmetricMatrix(float **matrix, int n) {

@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
     
     
-    for(int n = 1; n <= 16; n++) {
+    for(int n = 1; n <= 8; n++) {
         //Setting for the number of threads
         omp_set_num_threads(n);
         printf("We are currently running the simulation with %d threads \n", n);

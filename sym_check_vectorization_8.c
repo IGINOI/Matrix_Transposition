@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #endif
 #include <time.h>
-
+#include <immintrin.h>
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 // %%%%% FUNCTIONS DECLARATION %%%%%% //
@@ -108,9 +108,26 @@ int main(int argc, char *argv[]) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 int checkSym(float **matrix, int n) {
+    int isSymmetric = 1;
+    // Assuming matrix is row-major and a power of 2 for simplicity
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < i; j++) {
-            if (matrix[i][j] != matrix[j][i]) {
+        for (int j = 0; j < i; j += 8) { // Process 8 elements at a time
+            // Load 8 elements from row i and column j
+            __m256 row_vec = _mm256_loadu_ps(&matrix[i][j]);
+
+            // Load 8 elements from column i and row j
+            __m256 col_vec = _mm256_set_ps(
+                matrix[j + 7][i], matrix[j + 6][i], matrix[j + 5][i], matrix[j + 4][i],
+                matrix[j + 3][i], matrix[j + 2][i], matrix[j + 1][i], matrix[j][i]);
+
+            // Compare row_vec and col_vec
+            __m256 cmp = _mm256_cmp_ps(row_vec, col_vec, _CMP_NEQ_OQ);
+
+            // Move the comparison result to an integer
+            isSymmetric = _mm256_movemask_ps(cmp);
+
+            // If any element mismatches, set isSymmetric = 0
+            if (isSymmetric != 0) {
                 return 0;
             }
         }

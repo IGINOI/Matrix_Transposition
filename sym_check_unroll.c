@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     double total_time = 0.0;
 
     for(int i = 0; i < total_iterations; i++) {
-        printf("Iteration %d \n", i);
+        //printf("Iteration %d \n", i);
         //Initializing the symmetric matrix
         initializeSymmetricMatrix(M, matrix_size); 
 
@@ -108,16 +108,20 @@ int main(int argc, char *argv[]) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 int checkSym(float **matrix, int n) {
+    const int blockSize = 2;
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < i; j += 8) {
-            if (matrix[i][j] != matrix[j][i] ||
-                matrix[i][j + 1] != matrix[j + 1][i] ||
-                matrix[i][j + 2] != matrix[j + 2][i] ||
-                matrix[i][j + 3] != matrix[j + 3][i] ||
-                matrix[i][j + 4] != matrix[j + 4][i] ||
-                matrix[i][j + 5] != matrix[j + 5][i] ||
-                matrix[i][j + 6] != matrix[j + 6][i] ||
-                matrix[i][j + 7] != matrix[j + 7][i]) {
+        for (int j = 0; j < i - blockSize + 1; j += blockSize) {
+            if (
+                matrix[i][j] != matrix[j][i]
+                || matrix[i][j + 1] != matrix[j + 1][i]
+                // || matrix[i][j + 2] != matrix[j + 2][i]
+                // || matrix[i][j + 3] != matrix[j + 3][i]
+                // || matrix[i][j + 4] != matrix[j + 4][i]
+                // || matrix[i][j + 5] != matrix[j + 5][i]
+                // || matrix[i][j + 6] != matrix[j + 6][i]
+                // || matrix[i][j + 7] != matrix[j + 7][i]
+                ) 
+            {
                 return 0;
             }
         }

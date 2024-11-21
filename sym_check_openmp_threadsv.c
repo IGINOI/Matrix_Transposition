@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #endif
 #include <time.h>
+#include <omp.h>
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
@@ -49,46 +50,49 @@ int main(int argc, char *argv[]) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    //Set the number of iterations to get a better average time
-    int total_iterations = 50;
-    double total_time = 0.0;
+        for(int n = 1; n <= 8; n++) {
+        //Setting for the number of threads
+        omp_set_num_threads(n);
+        printf("We are currently running the simulation with %d threads \n", n);
 
-    for(int i = 0; i < total_iterations; i++) {
-        //printf("Iteration %d \n", i);
-        //Initializing the symmetric matrix
-        initializeSymmetricMatrix(M, matrix_size); 
+        //Set the number of iterations to get a better average time
+        int total_iterations = 50;
+        double total_time = 0.0;
 
-        // Structure to store the time
-        struct timeval start, end;
-        long seconds, microseconds;
-        double time_taken;
+        for(int i = 0; i < total_iterations; i++) {
+            // Initializing the completely casual matrix
+            initializeSymmetricMatrix(M, matrix_size);
 
-        //Checking matrix symmetry
-        #ifdef _WIN32
-            mingw_gettimeofday(&start, NULL);
-        #else
-            gettimeofday(&start, NULL);
-        #endif
-        
-        int isSymmetric = checkSym(M, matrix_size);
-        
-        #ifdef _WIN32
-            mingw_gettimeofday(&end, NULL);
-        #else
-            gettimeofday(&end, NULL);
-        #endif
+            // Structure to store the time
+            struct timeval start, end;
+            long seconds, microseconds;
+            double time_taken;
 
-        printf("Matrix is %s\n", isSymmetric ? "symmetric" : "not symmetric");
+            // Transposing the matrix
+            #ifdef _WIN32
+                mingw_gettimeofday(&start, NULL);
+            #else
+                gettimeofday(&start, NULL);
+            #endif
 
-        //Time elapsed calculation
-        seconds = end.tv_sec - start.tv_sec;
-        microseconds = end.tv_usec - start.tv_usec;
-        time_taken = seconds + microseconds / 1e6;
-        total_time += time_taken;
+            int isSymmetric = checkSym(M, matrix_size);
+            
+            #ifdef _WIN32
+                mingw_gettimeofday(&end, NULL);
+            #else
+                gettimeofday(&end, NULL);
+            #endif
+
+            //Time elapsed calculation
+            seconds = end.tv_sec - start.tv_sec;
+            microseconds = end.tv_usec - start.tv_usec;
+            time_taken = seconds + microseconds * 1e-6;
+            total_time += time_taken;
+        }
+
+        double avg_time = total_time / total_iterations;
+        printf("%.3f\n", avg_time / 1e-3);
     }
-    
-    double avg_time = total_time / total_iterations;
-    printf("Average symmetry check time: %.3fms\n", avg_time * 1e3);
 
     // printf("Original Matrix:\n");
     // printMatrix(M, matrix_size);
@@ -108,14 +112,17 @@ int main(int argc, char *argv[]) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 int checkSym(float **matrix, int n) {
+    int isSymmetric = 1;
+    #pragma omp parallel for reduction(&:isSymmetric) schedule(static, 8)
     for (int i = 0; i < n; i++) {
-        for (int j = 0; j < i; j++) {
+        #pragma omp simd
+        for (int j = 0; j < n; j++) {
             if (matrix[i][j] != matrix[j][i]) {
-                return 0;
+                isSymmetric = 0;
             }
         }
     }
-    return 1;
+    return isSymmetric;
 }
 
 void initializeSymmetricMatrix(float **matrix, int n) {
