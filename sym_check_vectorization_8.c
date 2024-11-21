@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
             gettimeofday(&end, NULL);
         #endif
 
-        printf("Matrix is %s\n", isSymmetric ? "symmetric" : "not symmetric");
+        //printf("Matrix is %s\n", isSymmetric ? "symmetric" : "not symmetric");
 
         //Time elapsed calculation
         seconds = end.tv_sec - start.tv_sec;
@@ -116,9 +116,7 @@ int checkSym(float **matrix, int n) {
             __m256 row_vec = _mm256_loadu_ps(&matrix[i][j]);
 
             // Load 8 elements from column i and row j
-            __m256 col_vec = _mm256_set_ps(
-                matrix[j + 7][i], matrix[j + 6][i], matrix[j + 5][i], matrix[j + 4][i],
-                matrix[j + 3][i], matrix[j + 2][i], matrix[j + 1][i], matrix[j][i]);
+            __m256 col_vec = _mm256_set_ps(matrix[j + 7][i], matrix[j + 6][i], matrix[j + 5][i], matrix[j + 4][i], matrix[j + 3][i], matrix[j + 2][i], matrix[j + 1][i], matrix[j][i]);
 
             // Compare row_vec and col_vec
             __m256 cmp = _mm256_cmp_ps(row_vec, col_vec, _CMP_NEQ_OQ);
