@@ -59,12 +59,12 @@ int main(int argc, char *argv[]) {
         initializeSymmetricMatrix(M, matrix_size); 
 
         // Check if the matrix is stored in row-major order
-        // if (isRowMajor(M, matrix_size)) {
-        //     printf("Matrix is stored in row-major order.\n");
-        // } else {
-        //     printf("Matrix is not stored in row-major order.\n");
-        //     return 1;
-        // }
+        if (!isRowMajor(M, matrix_size)) {
+            printf("Matrix is not stored in row-major order.\n");
+            return 1;
+        } else {
+            printf("Matrix is stored in row-major order.\n");
+        }
 
         // Structure to store the time
         struct timeval start, end;

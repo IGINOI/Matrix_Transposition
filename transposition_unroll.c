@@ -18,7 +18,8 @@ void initializeMatrix(float **matrix, int n);
 void matTranspose(float **matrix, float **transpose, int n);
 //prints the matrix
 void printMatrix(float **matrix, int n);
-
+//checks if the matrix is actually transposed
+int matrix_actually_transposed(float **matrix, float **transpose, int n);
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 // %%%%%%%%% MAIN FUNCTION %%%%%%%%%% //
@@ -84,17 +85,20 @@ int main(int argc, char *argv[]) {
         microseconds = end.tv_usec - start.tv_usec;
         time_taken = seconds + microseconds * 1e-6;
         total_time += time_taken;
+
+        //CHECK SECTION - Uncomment to check the matrices
+        // Check whether the matrix is actually transposed
+        // printf("Matrix's actually transposed: %s\n", matrix_actually_transposed(M, T, matrix_size) ? "YES" : "NO");
+
+        // printf("Original Matrix:\n");
+        // printMatrix(M, matrix_size);
+
+        // printf("Transposed Matrix:\n");
+        // printMatrix(T, matrix_size);
     }
 
     double avg_time = total_time / total_iterations;
     printf("Average matrix transposition time: %.3fms\n", avg_time / 1e-3);
-
-    //printf("Original Matrix:\n");
-    //printMatrix(M, matrix_size);
-
-    //printf("Transposed Matrix:\n");
-    //printMatrix(T, matrix_size);
-
 
     //Freeing memory
     for (int i = 0; i < matrix_size; i++) {
@@ -151,4 +155,15 @@ void printMatrix(float **matrix, int n) {
         }
         printf("\n");
     }
+}
+
+int matrix_actually_transposed(float **matrix, float **transpose, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (matrix[i][j] != transpose[j][i]) {
+                return 0;
+            }
+        }
+    }
+    return 1;
 }
