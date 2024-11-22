@@ -58,6 +58,14 @@ int main(int argc, char *argv[]) {
         //Initializing the symmetric matrix
         initializeSymmetricMatrix(M, matrix_size); 
 
+        // Check if the matrix is stored in row-major order
+        // if (isRowMajor(M, matrix_size)) {
+        //     printf("Matrix is stored in row-major order.\n");
+        // } else {
+        //     printf("Matrix is not stored in row-major order.\n");
+        //     return 1;
+        // }
+
         // Structure to store the time
         struct timeval start, end;
         long seconds, microseconds;
@@ -150,4 +158,13 @@ void printMatrix(float **matrix, int n) {
         }
         printf("\n");
     }
+}
+
+int isRowMajor(float **matrix, int n) {
+    for (int i = 0; i < n; i++) {
+        if (&matrix[i][1] != &matrix[i][0] + 1) { //checking whether memory addresses are contiguous
+            return 0;
+        }
+    }
+    return 1;
 }
