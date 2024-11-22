@@ -21,11 +21,11 @@ I worked in two different enviroments. The idea was also to look at the differen
     * Name and Version: Windows 11, version 23H2.
     * Architecture: 64-bit.
 * Software Environment
-    * Compiler:
-        * Compiler: GCC 13.2.0 via MinGW-w64 (Built by MSYS2 project).
+    * Compiler: GCC 13.2.0 via MinGW-w64 (Built by MSYS2 project).
 
 ### UNITN Cluster
-The version of gcc used to compile here is 9.1
+* Software Environment
+    * Compiler: GCC 9.1
 
 ## Files Explanation
 * Matrix Transposition files
