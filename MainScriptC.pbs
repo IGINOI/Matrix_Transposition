@@ -1,0 +1,376 @@
+#!/bin/bash
+
+# Job name
+#PBS -N sequential_matrix_transposition
+
+# Output files
+#PBS -o ./results.o
+#PBS -e ./results.e
+
+# Queue name
+#PBS -q short_cpuQ
+
+# Set the maximum wall time
+#PBS -l walltime=01:00:00
+
+# Number of nodes, cpus, mpi processors and amount of memory
+#PBS -l select=1:ncpus=1:mem=128mb
+
+# Modules for C
+module load gcc91
+gcc() {
+    gcc-9.1.0 "$@"
+}
+gcc --version
+
+# Select the working directory
+cd /home/davide.facchinelli/PCL/DE1
+
+# Create the directory for the compiled files if it does not already exists
+mkdir -p COMPILED_FILES
+
+######################################################################
+## COMPILATION AND RUNNIG OF ALL THE CODES FOR MATRIX TRANSPOSITION ##
+######################################################################
+
+# Matrix transposition -> sequential
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq_0 -O0
+echo -e "\n###############################################"
+echo "Sequential matrix transposition with |-O0| flag"
+echo "###############################################"
+./COMPILED_FILES/tra_seq_0 2
+./COMPILED_FILES/tra_seq_0 3
+./COMPILED_FILES/tra_seq_0 4
+./COMPILED_FILES/tra_seq_0 5
+./COMPILED_FILES/tra_seq_0 6
+./COMPILED_FILES/tra_seq_0 7
+./COMPILED_FILES/tra_seq_0 8
+./COMPILED_FILES/tra_seq_0 9
+./COMPILED_FILES/tra_seq_0 10
+./COMPILED_FILES/tra_seq_0 11
+./COMPILED_FILES/tra_seq_0 12
+
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq_1 -O1
+echo -e "\n###############################################"
+echo "Sequential matrix transposition with |-O1| flag"
+echo "###############################################"
+./COMPILED_FILES/tra_seq_1 2
+./COMPILED_FILES/tra_seq_1 3
+./COMPILED_FILES/tra_seq_1 4
+./COMPILED_FILES/tra_seq_1 5
+./COMPILED_FILES/tra_seq_1 6
+./COMPILED_FILES/tra_seq_1 7
+./COMPILED_FILES/tra_seq_1 8
+./COMPILED_FILES/tra_seq_1 9
+./COMPILED_FILES/tra_seq_1 10
+./COMPILED_FILES/tra_seq_1 11
+./COMPILED_FILES/tra_seq_1 12
+
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq_2 -O2
+echo -e "\n###############################################"
+echo "Sequential matrix transposition with |-O2| flag"
+echo "###############################################"
+./COMPILED_FILES/tra_seq_2 2
+./COMPILED_FILES/tra_seq_2 3
+./COMPILED_FILES/tra_seq_2 4
+./COMPILED_FILES/tra_seq_2 5
+./COMPILED_FILES/tra_seq_2 6
+./COMPILED_FILES/tra_seq_2 7
+./COMPILED_FILES/tra_seq_2 8
+./COMPILED_FILES/tra_seq_2 9
+./COMPILED_FILES/tra_seq_2 10
+./COMPILED_FILES/tra_seq_2 11
+./COMPILED_FILES/tra_seq_2 12
+
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq_unroll -O1 -funroll-loops
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with |-O1 -funroll-loops| flags"
+echo "##############################################################"
+./COMPILED_FILES/tra_seq_unroll 2
+./COMPILED_FILES/tra_seq_unroll 3
+./COMPILED_FILES/tra_seq_unroll 4
+./COMPILED_FILES/tra_seq_unroll 5
+./COMPILED_FILES/tra_seq_unroll 6
+./COMPILED_FILES/tra_seq_unroll 7
+./COMPILED_FILES/tra_seq_unroll 8
+./COMPILED_FILES/tra_seq_unroll 9
+./COMPILED_FILES/tra_seq_unroll 10
+./COMPILED_FILES/tra_seq_unroll 11
+./COMPILED_FILES/tra_seq_unroll 12
+
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq_vectorize -O1 -ftree-loop-vectorize
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with |-O1 -ftree-loop-vectorize| flags"
+echo "##############################################################"
+./COMPILED_FILES/tra_seq_vectorize 2
+./COMPILED_FILES/tra_seq_vectorize 3
+./COMPILED_FILES/tra_seq_vectorize 4
+./COMPILED_FILES/tra_seq_vectorize 5
+./COMPILED_FILES/tra_seq_vectorize 6
+./COMPILED_FILES/tra_seq_vectorize 7
+./COMPILED_FILES/tra_seq_vectorize 8
+./COMPILED_FILES/tra_seq_vectorize 9
+./COMPILED_FILES/tra_seq_vectorize 10
+./COMPILED_FILES/tra_seq_vectorize 11
+./COMPILED_FILES/tra_seq_vectorize 12
+
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq_prefetch -O1 -fprefetch-loop-arrays
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with |-O1 -fprefetch-loop-arrays| flags"
+echo "##############################################################"
+./COMPILED_FILES/tra_seq_prefetch 2
+./COMPILED_FILES/tra_seq_prefetch 3
+./COMPILED_FILES/tra_seq_prefetch 4
+./COMPILED_FILES/tra_seq_prefetch 5
+./COMPILED_FILES/tra_seq_prefetch 6
+./COMPILED_FILES/tra_seq_prefetch 7
+./COMPILED_FILES/tra_seq_prefetch 8
+./COMPILED_FILES/tra_seq_prefetch 9
+./COMPILED_FILES/tra_seq_prefetch 10
+./COMPILED_FILES/tra_seq_prefetch 11
+./COMPILED_FILES/tra_seq_prefetch 12
+
+gcc transposition_unroll.c -o COMPILED_FILES/tra_unroll -O0
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with explicit unrolling and |-O0| flag"
+echo "##############################################################"
+./COMPILED_FILES/tra_unroll 2
+./COMPILED_FILES/tra_unroll 3
+./COMPILED_FILES/tra_unroll 4
+./COMPILED_FILES/tra_unroll 5
+./COMPILED_FILES/tra_unroll 6
+./COMPILED_FILES/tra_unroll 7
+./COMPILED_FILES/tra_unroll 8
+./COMPILED_FILES/tra_unroll 9
+./COMPILED_FILES/tra_unroll 10
+./COMPILED_FILES/tra_unroll 11
+./COMPILED_FILES/tra_unroll 12
+
+gcc transposition_vectorization_4.c -o COMPILED_FILES/tra_vec_4 -O0
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with explicit vectorization (blocks of 4 elements) and |-O0| flag"
+echo "##############################################################"
+./COMPILED_FILES/tra_vec_4 2
+./COMPILED_FILES/tra_vec_4 3
+./COMPILED_FILES/tra_vec_4 4
+./COMPILED_FILES/tra_vec_4 5
+./COMPILED_FILES/tra_vec_4 6
+./COMPILED_FILES/tra_vec_4 7
+./COMPILED_FILES/tra_vec_4 8
+./COMPILED_FILES/tra_vec_4 9
+./COMPILED_FILES/tra_vec_4 10
+./COMPILED_FILES/tra_vec_4 11
+./COMPILED_FILES/tra_vec_4 12
+
+gcc transposition_vectorization_8.c -o COMPILED_FILES/tra_vec_8 -O0
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with explicit vectorization (blocks of 8 elements) and |-O0| flag"
+echo "##############################################################"
+./COMPILED_FILES/tra_vec_8 2
+./COMPILED_FILES/tra_vec_8 3
+./COMPILED_FILES/tra_vec_8 4
+./COMPILED_FILES/tra_vec_8 5
+./COMPILED_FILES/tra_vec_8 6
+./COMPILED_FILES/tra_vec_8 7
+./COMPILED_FILES/tra_vec_8 8
+./COMPILED_FILES/tra_vec_8 9
+./COMPILED_FILES/tra_vec_8 10
+./COMPILED_FILES/tra_vec_8 11
+./COMPILED_FILES/tra_vec_8 12
+
+gcc transposition_openmp.c -o COMPILED_FILES/tra_openmp -fopenmp
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
+echo "##############################################################"
+./COMPILED_FILES/tra_openmp 2
+./COMPILED_FILES/tra_openmp 3
+./COMPILED_FILES/tra_openmp 4
+./COMPILED_FILES/tra_openmp 5
+./COMPILED_FILES/tra_openmp 6
+./COMPILED_FILES/tra_openmp 7
+./COMPILED_FILES/tra_openmp 8
+./COMPILED_FILES/tra_openmp 9
+./COMPILED_FILES/tra_openmp 10
+./COMPILED_FILES/tra_openmp 11
+./COMPILED_FILES/tra_openmp 12
+
+gcc transposition_openmp_threadsv.c -o COMPILED_FILES/tra_openmp_t -fopenmp
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
+echo "##############################################################"
+./COMPILED_FILES/tra_openmp_t 2
+./COMPILED_FILES/tra_openmp_t 3
+./COMPILED_FILES/tra_openmp_t 4
+./COMPILED_FILES/tra_openmp_t 5
+./COMPILED_FILES/tra_openmp_t 6
+./COMPILED_FILES/tra_openmp_t 7
+./COMPILED_FILES/tra_openmp_t 8
+./COMPILED_FILES/tra_openmp_t 9
+./COMPILED_FILES/tra_openmp_t 10
+./COMPILED_FILES/tra_openmp_t 11
+./COMPILED_FILES/tra_openmp_t 12
+
+######################################################################
+##### COMPILATION AND RUNNIG OF ALL THE CODES FOR SYMMETRY CHECK #####
+######################################################################
+
+# Matrix transposition -> sequential
+gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_0 -O0
+echo -e "\n###############################################"
+echo "Sequential matrix sym_check with |-O0| flag"
+echo "###############################################"
+./COMPILED_FILES/sym_seq_0 2
+./COMPILED_FILES/sym_seq_0 3
+./COMPILED_FILES/sym_seq_0 4
+./COMPILED_FILES/sym_seq_0 5
+./COMPILED_FILES/sym_seq_0 6
+./COMPILED_FILES/sym_seq_0 7
+./COMPILED_FILES/sym_seq_0 8
+./COMPILED_FILES/sym_seq_0 9
+./COMPILED_FILES/sym_seq_0 10
+./COMPILED_FILES/sym_seq_0 11
+./COMPILED_FILES/sym_seq_0 12
+
+gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_1 -O1
+echo -e "\n###############################################"
+echo "Sequential matrix sym_check with |-O1| flag"
+echo "###############################################"
+./COMPILED_FILES/sym_seq_1 2
+./COMPILED_FILES/sym_seq_1 3
+./COMPILED_FILES/sym_seq_1 4
+./COMPILED_FILES/sym_seq_1 5
+./COMPILED_FILES/sym_seq_1 6
+./COMPILED_FILES/sym_seq_1 7
+./COMPILED_FILES/sym_seq_1 8
+./COMPILED_FILES/sym_seq_1 9
+./COMPILED_FILES/sym_seq_1 10
+./COMPILED_FILES/sym_seq_1 11
+./COMPILED_FILES/sym_seq_1 12
+
+gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_2 -O2
+echo -e "\n###############################################"
+echo "Sequential matrix sym_check with |-O2| flag"
+echo "###############################################"
+./COMPILED_FILES/sym_seq_2 2
+./COMPILED_FILES/sym_seq_2 3
+./COMPILED_FILES/sym_seq_2 4
+./COMPILED_FILES/sym_seq_2 5
+./COMPILED_FILES/sym_seq_2 6
+./COMPILED_FILES/sym_seq_2 7
+./COMPILED_FILES/sym_seq_2 8
+./COMPILED_FILES/sym_seq_2 9
+./COMPILED_FILES/sym_seq_2 10
+./COMPILED_FILES/sym_seq_2 11
+./COMPILED_FILES/sym_seq_2 12
+
+gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_unroll -O1 -funroll-loops
+echo -e "\n##############################################################"
+echo "Sequential matrix sym_check with |-O1 -funroll-loops| flags"
+echo "##############################################################"
+./COMPILED_FILES/sym_seq_unroll 2
+./COMPILED_FILES/sym_seq_unroll 3
+./COMPILED_FILES/sym_seq_unroll 4
+./COMPILED_FILES/sym_seq_unroll 5
+./COMPILED_FILES/sym_seq_unroll 6
+./COMPILED_FILES/sym_seq_unroll 7
+./COMPILED_FILES/sym_seq_unroll 8
+./COMPILED_FILES/sym_seq_unroll 9
+./COMPILED_FILES/sym_seq_unroll 10
+./COMPILED_FILES/sym_seq_unroll 11
+./COMPILED_FILES/sym_seq_unroll 12
+
+gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_vectorize -O1 -ftree-loop-vectorize
+echo -e "\n##############################################################"
+echo "Sequential matrix sym_check with |-O1 -ftree-loop-vectorize| flags"
+echo "##############################################################"
+./COMPILED_FILES/sym_seq_vectorize 2
+./COMPILED_FILES/sym_seq_vectorize 3
+./COMPILED_FILES/sym_seq_vectorize 4
+./COMPILED_FILES/sym_seq_vectorize 5
+./COMPILED_FILES/sym_seq_vectorize 6
+./COMPILED_FILES/sym_seq_vectorize 7
+./COMPILED_FILES/sym_seq_vectorize 8
+./COMPILED_FILES/sym_seq_vectorize 9
+./COMPILED_FILES/sym_seq_vectorize 10
+./COMPILED_FILES/sym_seq_vectorize 11
+./COMPILED_FILES/sym_seq_vectorize 12
+
+gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_prefetch -O1 -fprefetch-loop-arrays
+echo -e "\n##############################################################"
+echo "Sequential matrix sym_check with |-O1 -fprefetch-loop-arrays| flags"
+echo "##############################################################"
+./COMPILED_FILES/sym_seq_prefetch 2
+./COMPILED_FILES/sym_seq_prefetch 3
+./COMPILED_FILES/sym_seq_prefetch 4
+./COMPILED_FILES/sym_seq_prefetch 5
+./COMPILED_FILES/sym_seq_prefetch 6
+./COMPILED_FILES/sym_seq_prefetch 7
+./COMPILED_FILES/sym_seq_prefetch 8
+./COMPILED_FILES/sym_seq_prefetch 9
+./COMPILED_FILES/sym_seq_prefetch 10
+./COMPILED_FILES/sym_seq_prefetch 11
+./COMPILED_FILES/sym_seq_prefetch 12
+
+gcc sym_check_unroll.c -o COMPILED_FILES/sym_unroll -O0
+echo -e "\n##############################################################"
+echo "Sequential matrix sym_check with explicit unrolling and |-O0| flag"
+echo "##############################################################"
+./COMPILED_FILES/sym_unroll 2
+./COMPILED_FILES/sym_unroll 3
+./COMPILED_FILES/sym_unroll 4
+./COMPILED_FILES/sym_unroll 5
+./COMPILED_FILES/sym_unroll 6
+./COMPILED_FILES/sym_unroll 7
+./COMPILED_FILES/sym_unroll 8
+./COMPILED_FILES/sym_unroll 9
+./COMPILED_FILES/sym_unroll 10
+./COMPILED_FILES/sym_unroll 11
+./COMPILED_FILES/sym_unroll 12
+
+gcc sym_check_vectorization_4.c -o COMPILED_FILES/sym_vec_4 -O0
+echo -e "\n##############################################################"
+echo "Sequential matrix sym_check with explicit vectorization (blocks of 4 elements) and |-O0| flag"
+echo "##############################################################"
+./COMPILED_FILES/sym_vec_4 2
+./COMPILED_FILES/sym_vec_4 3
+./COMPILED_FILES/sym_vec_4 4
+./COMPILED_FILES/sym_vec_4 5
+./COMPILED_FILES/sym_vec_4 6
+./COMPILED_FILES/sym_vec_4 7
+./COMPILED_FILES/sym_vec_4 8
+./COMPILED_FILES/sym_vec_4 9
+./COMPILED_FILES/sym_vec_4 10
+./COMPILED_FILES/sym_vec_4 11
+./COMPILED_FILES/sym_vec_4 12
+
+gcc sym_check_vectorization_8.c -o COMPILED_FILES/sym_vec_8 -O0
+echo -e "\n##############################################################"
+echo "Sequential matrix sym_check with explicit vectorization (blocks of 8 elements) and |-O0| flag"
+echo "##############################################################"
+./COMPILED_FILES/sym_vec_8 2
+./COMPILED_FILES/sym_vec_8 3
+./COMPILED_FILES/sym_vec_8 4
+./COMPILED_FILES/sym_vec_8 5
+./COMPILED_FILES/sym_vec_8 6
+./COMPILED_FILES/sym_vec_8 7
+./COMPILED_FILES/sym_vec_8 8
+./COMPILED_FILES/sym_vec_8 9
+./COMPILED_FILES/sym_vec_8 10
+./COMPILED_FILES/sym_vec_8 11
+./COMPILED_FILES/sym_vec_8 12
+
+gcc sym_check_openmp.c -o COMPILED_FILES/sym_openmp -fopenmp
+echo -e "\n##############################################################"
+echo "Sequential matrix sym_check with openmp and |-fopenmp| flag"
+echo "##############################################################"
+./COMPILED_FILES/sym_openmp 2
+./COMPILED_FILES/sym_openmp 3
+./COMPILED_FILES/sym_openmp 4
+./COMPILED_FILES/sym_openmp 5
+./COMPILED_FILES/sym_openmp 6
+./COMPILED_FILES/sym_openmp 7
+./COMPILED_FILES/sym_openmp 8
+./COMPILED_FILES/sym_openmp 9
+./COMPILED_FILES/sym_openmp 10
+./COMPILED_FILES/sym_openmp 11
+./COMPILED_FILES/sym_openmp 12
