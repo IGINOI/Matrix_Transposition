@@ -96,8 +96,7 @@ int main(int argc, char *argv[]) {
     }
 
     double avg_time = total_time / total_iterations;
-    printf("Matrix size: %d. Average time taken: %.3fms\n", matrix_size, avg_time / 1e-3);
-
+    printf("Matrix size: %d x %d. Average time taken: %.3fms\n", matrix_size, matrix_size, avg_time / 1e-3);
 
     //Freeing memory
     for (int i = 0; i < matrix_size; i++) {

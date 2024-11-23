@@ -42,8 +42,6 @@ int main(int argc, char *argv[]) {
     //Calculating the matrix size by shifting by the exponent
     int matrix_size = 1 << exponent;
 
-    printf("Matrix size: %d\n", matrix_size);
-
     //Allocating memory for the matrices M and T
     float **M = (float **)malloc(matrix_size * sizeof(float *));
     for (int i = 0; i < matrix_size; i++) {
@@ -91,7 +89,7 @@ int main(int argc, char *argv[]) {
     }
     
     double avg_time = total_time / total_iterations;
-    printf("Average symmetry check time: %.3fms\n", avg_time * 1e3);
+    printf("Matrix size: %d x %d. Threads number: %d. Average time taken: %.3fms\n", matrix_size, matrix_size, omp_get_num_threads(), avg_time / 1e-3);
 
     // printf("Original Matrix:\n");
     // printMatrix(M, matrix_size);
