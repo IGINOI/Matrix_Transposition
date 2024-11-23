@@ -108,7 +108,11 @@ int main(int argc, char *argv[]) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 int checkSym(float **matrix, int n) {
-    const int blockSize = 2;
+    // !!!!! CRITICAL IN ORDER TO EXECUTE DIFFERENT BLOCK SIZES -> Comment or Uncomment the lines below to change the block size !!!!!
+    int blockSize = 2;
+    // int blockSize = 4;
+    // int blockSize = 8;
+
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < i - blockSize + 1; j += blockSize) {
             if (

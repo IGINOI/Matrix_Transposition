@@ -18,6 +18,8 @@ void initializeSymmetricMatrix(float **matrix, int n);
 int checkSym(float **matrix, int n);
 //prints the matrix
 void printMatrix(float **matrix, int n);
+//checks if the matrix is stored in row-major order
+int isRowMajor(float **matrix, int n);
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //

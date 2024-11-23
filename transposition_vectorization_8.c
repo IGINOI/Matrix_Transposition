@@ -19,6 +19,8 @@ void initializeMatrix(float **matrix, int n);
 void matTranspose(float **matrix, float **transpose, int n);
 //prints the matrix
 void printMatrix(float **matrix, int n);
+//checks if the matrix is stored in row-major order
+int isRowMajor(float **matrix, int n);
 //checks if the matrix is actually transposed
 int matrix_actually_transposed(float **matrix, float **transpose, int n);
 

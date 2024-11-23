@@ -124,21 +124,23 @@ void initializeMatrix(float **matrix, int n) {
 }
 
 void matTranspose(float **matrix, float **transpose, int n) {
-    const int blockSize = 8; // Block size for cache efficiency
+    // !!!!! CRITICAL IN ORDER TO EXECUTE DIFFERENT BLOCK SIZES -> Comment or Uncomment the lines below to change the block size !!!!!
+
+    int blockSize = 2; 
+    // int blockSize = 4; 
+    // int blockSize = 8;
     
-    //Iterating over the blocks of elements. 
-    //For each iteration we work over a chunk of rows and columns
     for (int i = 0; i < n; i += 1) {
         int j;
         for (j = 0; j < n - blockSize + 1; j += blockSize) {
             transpose[j][i] = matrix[i][j];
             transpose[j + 1][i] = matrix[i][j + 1];
-            transpose[j + 2][i] = matrix[i][j + 2];
-            transpose[j + 3][i] = matrix[i][j + 3];
-            transpose[j + 4][i] = matrix[i][j + 4];
-            transpose[j + 5][i] = matrix[i][j + 5];
-            transpose[j + 6][i] = matrix[i][j + 6];
-            transpose[j + 7][i] = matrix[i][j + 7];
+            // transpose[j + 2][i] = matrix[i][j + 2];
+            // transpose[j + 3][i] = matrix[i][j + 3];
+            // transpose[j + 4][i] = matrix[i][j + 4];
+            // transpose[j + 5][i] = matrix[i][j + 5];
+            // transpose[j + 6][i] = matrix[i][j + 6];
+            // transpose[j + 7][i] = matrix[i][j + 7];
         }
         for (; j < n; j++) {
             transpose[j][i] = matrix[i][j];
