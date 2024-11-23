@@ -112,9 +112,9 @@ int main(int argc, char *argv[]) {
 
 int checkSym(float **matrix, int n) {
     int isSymmetric = 1;
-    #pragma omp parallel for reduction(&&:isSymmetric) schedule(static, 8) //the reduction ensures that isSymmetric is 1 only of all threads agree in that statement
+    #pragma omp parallel // for reduction(&&:isSymmetric) schedule(static, 8)
     for (int i = 0; i < n; i++) {
-        #pragma omp simd
+        // #pragma omp simd
         for (int j = 0; j < n; j++) {
             if (matrix[i][j] != matrix[j][i]) {
                 isSymmetric = 0;

@@ -136,7 +136,7 @@ void initializeMatrix(float **matrix, int n) {
 void matTranspose(float **matrix, float **transpose, int n) {
     #pragma omp parallel 
     {
-        #pragma omp for collapse(2) schedule(static,4)
+        // #pragma omp for collapse(2) schedule(static,4) atomic (write)
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 transpose[j][i] = matrix[i][j];

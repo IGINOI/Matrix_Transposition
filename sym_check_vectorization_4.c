@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
             printf("Matrix is not stored in row-major order.\n");
             return 1;
         } else {
-            printf("Matrix is stored in row-major order.\n");
+            // printf("Matrix is stored in row-major order.\n");
         }
 
         // Structure to store the time
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
     }
     
     double avg_time = total_time / total_iterations;
-    printf("Average symmetry check time: %.3fms\n", avg_time * 1e3);
+    printf("Matrix size: %d. Average time taken: %.3fms\n", matrix_size, avg_time / 1e-3);
 
     // printf("Original Matrix:\n");
     // printMatrix(M, matrix_size);

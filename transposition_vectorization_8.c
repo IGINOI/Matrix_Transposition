@@ -44,8 +44,6 @@ int main(int argc, char *argv[]) {
     //Calculating the matrix size by shifting by the exponent
     int matrix_size = 1 << exponent;
 
-    printf("Matrix size: %d\n", matrix_size);
-
     //Allocating memory for the matrices M and T
     float **M = (float **)malloc(matrix_size * sizeof(float *));
     float **T = (float **)malloc(matrix_size * sizeof(float *));
@@ -67,7 +65,7 @@ int main(int argc, char *argv[]) {
             printf("Matrix is not stored in row-major order.\n");
             return 1;
         } else {
-            printf("Matrix is stored in row-major order.\n");
+            // printf("Matrix is stored in row-major order.\n");
         }
 
         // Structure to store the time
@@ -105,8 +103,7 @@ int main(int argc, char *argv[]) {
     }
 
     double avg_time = total_time / total_iterations;
-    printf("Average matrix transposition time: %.3fms\n", avg_time / 1e-3);
-
+    printf("Matrix size: %d. Average time taken: %.3fms\n", matrix_size, avg_time / 1e-3);
     //Freeing memory
     for (int i = 0; i < matrix_size; i++) {
         free(M[i]);

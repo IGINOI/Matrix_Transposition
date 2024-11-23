@@ -59,7 +59,6 @@ int main(int argc, char *argv[]) {
     for(int n = 1; n <= 8; n++) {
         //Setting for the number of threads
         omp_set_num_threads(n);
-        printf("We are currently running the simulation with %d threads \n", n);
 
         //Set the number of iterations to get a better average time
         int total_iterations = 50;
@@ -107,7 +106,7 @@ int main(int argc, char *argv[]) {
         }
 
         double avg_time = total_time / total_iterations;
-        printf("%.3f\n", avg_time / 1e-3);
+        printf("Matrix size: %d. Number of threads: %d. Average time taken: %.3fms\n", matrix_size, n, avg_time / 1e-3);
     }
 
     //Freeing memory
