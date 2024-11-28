@@ -51,10 +51,10 @@ int main(int argc, char *argv[]) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
         T[i] = (float *)malloc(matrix_size * sizeof(float));
     }
-
+    
     for(int n = 1; n <= 8; n++) {
         //Setting for the number of threads
-        omp_set_num_threads(n);
+        omp_set_num_threads(8);
 
         //Set the number of iterations to get a better average time
         int total_iterations = 50;
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
         for(int i = 0; i < total_iterations; i++) {
             // Initializing the completely casual matrix
-            initializeMatrix(M, matrix_size);
+            //initializeMatrix(M, matrix_size);
 
             // Structure to store the time
             struct timeval start, end;
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
                 gettimeofday(&start, NULL);
             #endif
 
-            matTranspose(M, T, matrix_size);
+            //matTranspose(M, T, matrix_size);
             
             #ifdef _WIN32
                 mingw_gettimeofday(&end, NULL);
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
         }
 
         double avg_time = total_time / total_iterations;
-        printf("Matrix size: %d x %d. Threads number: %d. Average time taken: %.3fms\n", matrix_size, matrix_size, omp_get_num_threads(), avg_time / 1e-3);
+        printf("Matrix size: %d x %d. Threads number: %d. Average time taken: %.3fms\n", matrix_size, matrix_size, n, avg_time / 1e-3);
     }
 
     //Freeing memory

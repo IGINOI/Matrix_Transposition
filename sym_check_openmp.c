@@ -48,7 +48,8 @@ int main(int argc, char *argv[]) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    omp_set_num_threads(8);
+    int number_of_threads = 8;
+    omp_set_num_threads(number_of_threads);
 
     //Set the number of iterations to get a better average time
     int total_iterations = 50;
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]) {
     }
     
     double avg_time = total_time / total_iterations;
-    printf("Matrix size: %d x %d. Threads number: %d. Average time taken: %.3fms\n", matrix_size, matrix_size, omp_get_num_threads(), avg_time / 1e-3);
+    printf("Matrix size: %d x %d. Threads number: %d. Average time taken: %.3fms\n", matrix_size, matrix_size, number_of_threads, avg_time / 1e-3);
 
     // printf("Original Matrix:\n");
     // printMatrix(M, matrix_size);
