@@ -46,6 +46,12 @@ int main(int argc, char *argv[]) {
     //Calculating the matrix size by shifting by the exponent
     int matrix_size = 1 << exponent;
 
+    //Ensuring the matrix is not a 4*4 (that's the only case possible in the program the matrix is not a multiple of 8)
+    if (matrix_size % 8 != 0) {
+        printf("The matrix %dx%d is to small to be divided in blocks of 8\n");
+        return 1;
+    }
+
     //Allocating memory for the matrices M and T
     float **M = (float **)malloc(matrix_size * sizeof(float *));
     float **T = (float **)malloc(matrix_size * sizeof(float *));
