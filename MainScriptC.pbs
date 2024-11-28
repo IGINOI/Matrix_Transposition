@@ -178,14 +178,14 @@ gcc transposition_openmp_threadsv.c -o COMPILED_FILES/tra_openmp_t -fopenmp
 echo -e "\n##############################################################"
 echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
 echo "##############################################################"
-./COMPILED_FILES/tra_openmp_t 4
-./COMPILED_FILES/tra_openmp_t 5
-./COMPILED_FILES/tra_openmp_t 6
-./COMPILED_FILES/tra_openmp_t 7
-./COMPILED_FILES/tra_openmp_t 8
-./COMPILED_FILES/tra_openmp_t 9
-./COMPILED_FILES/tra_openmp_t 10
-./COMPILED_FILES/tra_openmp_t 11
+# ./COMPILED_FILES/tra_openmp_t 4
+# ./COMPILED_FILES/tra_openmp_t 5
+# ./COMPILED_FILES/tra_openmp_t 6
+# ./COMPILED_FILES/tra_openmp_t 7
+# ./COMPILED_FILES/tra_openmp_t 8
+# ./COMPILED_FILES/tra_openmp_t 9
+# ./COMPILED_FILES/tra_openmp_t 10
+# ./COMPILED_FILES/tra_openmp_t 11
 ./COMPILED_FILES/tra_openmp_t 12
 
 ######################################################################
@@ -337,12 +337,12 @@ gcc sym_check_openmp_threadsv.c -o COMPILED_FILES/sym_openmp_t -fopenmp
 echo -e "\n##############################################################"
 echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
 echo "##############################################################"
-./COMPILED_FILES/sym_openmp_t 4
-./COMPILED_FILES/sym_openmp_t 5
-./COMPILED_FILES/sym_openmp_t 6
-./COMPILED_FILES/sym_openmp_t 7
-./COMPILED_FILES/sym_openmp_t 8
-./COMPILED_FILES/sym_openmp_t 9
-./COMPILED_FILES/sym_openmp_t 10
-./COMPILED_FILES/sym_openmp_t 11
+# ./COMPILED_FILES/sym_openmp_t 4
+# ./COMPILED_FILES/sym_openmp_t 5
+# ./COMPILED_FILES/sym_openmp_t 6
+# ./COMPILED_FILES/sym_openmp_t 7
+# ./COMPILED_FILES/sym_openmp_t 8
+# ./COMPILED_FILES/sym_openmp_t 9
+# ./COMPILED_FILES/sym_openmp_t 10
+# ./COMPILED_FILES/sym_openmp_t 11
 ./COMPILED_FILES/sym_openmp_t 12
