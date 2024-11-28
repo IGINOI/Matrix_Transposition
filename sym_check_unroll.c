@@ -14,7 +14,7 @@
 
 //initializes the matrix with random values and makes it symmetric
 void initializeSymmetricMatrix(float **matrix, int n);
-//checks if the matrix is symmetric
+//checks if the matrix is symmetric (CHANGE THE LEVEL OF UNROLLIN IN THIS FUNCTION DEFINITION)
 int checkSym(float **matrix, int n);
 //prints the matrix
 void printMatrix(float **matrix, int n);
