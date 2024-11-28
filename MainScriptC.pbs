@@ -36,7 +36,7 @@ mkdir -p COMPILED_FILES
 # Matrix transposition -> sequential
 gcc transposition_seq.c -o COMPILED_FILES/tra_seq_0 -O0
 echo -e "\n###############################################"
-echo "Sequential matrix transposition with |-O0| flag"
+echo "Sequential MATRIX TRANSPOSITION using |-O0| flag"
 echo "###############################################"
 ./COMPILED_FILES/tra_seq_0 4
 ./COMPILED_FILES/tra_seq_0 5
@@ -50,7 +50,7 @@ echo "###############################################"
 
 gcc transposition_seq.c -o COMPILED_FILES/tra_seq_1 -O1
 echo -e "\n###############################################"
-echo "Sequential matrix transposition with |-O1| flag"
+echo "Sequential MATRIX TRANSPOSITION using |-O1| flag"
 echo "###############################################"
 ./COMPILED_FILES/tra_seq_1 4
 ./COMPILED_FILES/tra_seq_1 5
@@ -64,7 +64,7 @@ echo "###############################################"
 
 gcc transposition_seq.c -o COMPILED_FILES/tra_seq_2 -O2
 echo -e "\n###############################################"
-echo "Sequential matrix transposition with |-O2| flag"
+echo "Sequential MATRIXX TRANSPOSITION using |-O2| flag"
 echo "###############################################"
 ./COMPILED_FILES/tra_seq_2 4
 ./COMPILED_FILES/tra_seq_2 5
@@ -78,7 +78,7 @@ echo "###############################################"
 
 gcc transposition_seq.c -o COMPILED_FILES/tra_seq_unroll -O1 -funroll-loops
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with |-O1 -funroll-loops| flags"
+echo "Sequential MATRIX TRANSPOSITION using |-O1 -funroll-loops| flags"
 echo "##############################################################"
 ./COMPILED_FILES/tra_seq_unroll 4
 ./COMPILED_FILES/tra_seq_unroll 5
@@ -92,7 +92,7 @@ echo "##############################################################"
 
 gcc transposition_seq.c -o COMPILED_FILES/tra_seq_vectorize -O1 -ftree-loop-vectorize
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with |-O1 -ftree-loop-vectorize| flags"
+echo "Sequential MATRIX TRANSPOSITION using |-O1 -ftree-loop-vectorize| flags"
 echo "##############################################################"
 ./COMPILED_FILES/tra_seq_vectorize 4
 ./COMPILED_FILES/tra_seq_vectorize 5
@@ -106,7 +106,7 @@ echo "##############################################################"
 
 gcc transposition_seq.c -o COMPILED_FILES/tra_seq_prefetch -O1 -fprefetch-loop-arrays
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with |-O1 -fprefetch-loop-arrays| flags"
+echo "Sequential MATRIX TRANSPOSITION using |-O1 -fprefetch-loop-arrays| flags"
 echo "##############################################################"
 ./COMPILED_FILES/tra_seq_prefetch 4
 ./COMPILED_FILES/tra_seq_prefetch 5
@@ -120,7 +120,7 @@ echo "##############################################################"
 
 gcc transposition_unroll.c -o COMPILED_FILES/tra_unroll -O0
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with explicit unrolling and |-O0| flag"
+echo "Sequential MATRIX TRANSPOSITION with explicit unrolling using |-O0| flag"
 echo "##############################################################"
 ./COMPILED_FILES/tra_unroll 4
 ./COMPILED_FILES/tra_unroll 5
@@ -134,7 +134,7 @@ echo "##############################################################"
 
 gcc transposition_vectorization_4.c -o COMPILED_FILES/tra_vec_4 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with explicit vectorization (blocks of 4 elements) and |-O0 -mavx2| flag"
+echo "Sequential MATRIX TRANSPOSITION with explicit vectorization (blocks of 4 elements) using |-O0 -mavx2| flag"
 echo "##############################################################"
 ./COMPILED_FILES/tra_vec_4 4
 ./COMPILED_FILES/tra_vec_4 5
@@ -148,7 +148,7 @@ echo "##############################################################"
 
 gcc transposition_vectorization_8.c -o COMPILED_FILES/tra_vec_8 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with explicit vectorization (blocks of 8 elements) and |-O0 -mavx2| flags"
+echo "Sequential MATRIX TRANSPOSITION with explicit vectorization (blocks of 8 elements) using |-O0 -mavx2| flags"
 echo "##############################################################"
 ./COMPILED_FILES/tra_vec_8 4
 ./COMPILED_FILES/tra_vec_8 5
@@ -162,7 +162,7 @@ echo "##############################################################"
 
 gcc transposition_openmp.c -o COMPILED_FILES/tra_openmp -fopenmp
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
+echo "Parallel MATRIX TRANSPOSITION with openmp using |-fopenmp| flag"
 echo "##############################################################"
 ./COMPILED_FILES/tra_openmp 4
 ./COMPILED_FILES/tra_openmp 5
@@ -176,7 +176,7 @@ echo "##############################################################"
 
 gcc transposition_openmp_threadsv.c -o COMPILED_FILES/tra_openmp_t -fopenmp
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
+echo "Parallel MATRIX TRANSPOSITION with openmp using |-fopenmp| flag -> used to study the behaviour with different number of threads"
 echo "##############################################################"
 # ./COMPILED_FILES/tra_openmp_t 4
 # ./COMPILED_FILES/tra_openmp_t 5
@@ -195,7 +195,7 @@ echo "##############################################################"
 # Matrix transposition -> sequential
 gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_0 -O0
 echo -e "\n###############################################"
-echo "Sequential matrix sym_check with |-O0| flag"
+echo "Sequential MATRIX SYM_CHECK using |-O0| flag"
 echo "###############################################"
 ./COMPILED_FILES/sym_seq_0 4
 ./COMPILED_FILES/sym_seq_0 5
@@ -209,7 +209,7 @@ echo "###############################################"
 
 gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_1 -O1
 echo -e "\n###############################################"
-echo "Sequential matrix sym_check with |-O1| flag"
+echo "Sequential MATRIX SYM_CHECK using |-O1| flag"
 echo "###############################################"
 ./COMPILED_FILES/sym_seq_1 4
 ./COMPILED_FILES/sym_seq_1 5
@@ -223,7 +223,7 @@ echo "###############################################"
 
 gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_2 -O2
 echo -e "\n###############################################"
-echo "Sequential matrix sym_check with |-O2| flag"
+echo "Sequential MATRIX SYM_CHECK using |-O2| flag"
 echo "###############################################"
 ./COMPILED_FILES/sym_seq_2 4
 ./COMPILED_FILES/sym_seq_2 5
@@ -237,7 +237,7 @@ echo "###############################################"
 
 gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_unroll -O1 -funroll-loops
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with |-O1 -funroll-loops| flags"
+echo "Sequential MATRIX SYM_CHECK using |-O1 -funroll-loops| flags"
 echo "##############################################################"
 ./COMPILED_FILES/sym_seq_unroll 4
 ./COMPILED_FILES/sym_seq_unroll 5
@@ -251,7 +251,7 @@ echo "##############################################################"
 
 gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_vectorize -O1 -ftree-loop-vectorize
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with |-O1 -ftree-loop-vectorize| flags"
+echo "Sequential MATRIX SYM_CHECK using |-O1 -ftree-loop-vectorize| flags"
 echo "##############################################################"
 ./COMPILED_FILES/sym_seq_vectorize 4
 ./COMPILED_FILES/sym_seq_vectorize 5
@@ -265,7 +265,7 @@ echo "##############################################################"
 
 gcc sym_check_seq.c -o COMPILED_FILES/sym_seq_prefetch -O1 -fprefetch-loop-arrays
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with |-O1 -fprefetch-loop-arrays| flags"
+echo "Sequential MATRIX SYM_CHECK using |-O1 -fprefetch-loop-arrays| flags"
 echo "##############################################################"
 ./COMPILED_FILES/sym_seq_prefetch 4
 ./COMPILED_FILES/sym_seq_prefetch 5
@@ -279,7 +279,7 @@ echo "##############################################################"
 
 gcc sym_check_unroll.c -o COMPILED_FILES/sym_unroll -O0
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with explicit unrolling and |-O0| flag"
+echo "Sequential MATRIX SYM_CHECK with explicit unrolling using |-O0| flag"
 echo "##############################################################"
 ./COMPILED_FILES/sym_unroll 4
 ./COMPILED_FILES/sym_unroll 5
@@ -293,7 +293,7 @@ echo "##############################################################"
 
 gcc sym_check_vectorization_4.c -o COMPILED_FILES/sym_vec_4 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with explicit vectorization (blocks of 4 elements) and |-O0 -mavx2| flag"
+echo "Sequential MATRIX SYM_CHECK with explicit vectorization (blocks of 4 elements) using |-O0 -mavx2| flag"
 echo "##############################################################"
 ./COMPILED_FILES/sym_vec_4 4
 ./COMPILED_FILES/sym_vec_4 5
@@ -307,7 +307,7 @@ echo "##############################################################"
 
 gcc sym_check_vectorization_8.c -o COMPILED_FILES/sym_vec_8 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with explicit vectorization (blocks of 8 elements) and |-O0 -mavx2| flags"
+echo "Sequential MATRIX SYM_CHECK with explicit vectorization (blocks of 8 elements) using |-O0 -mavx2| flags"
 echo "##############################################################"
 ./COMPILED_FILES/sym_vec_8 4
 ./COMPILED_FILES/sym_vec_8 5
@@ -321,7 +321,7 @@ echo "##############################################################"
 
 gcc sym_check_openmp.c -o COMPILED_FILES/sym_openmp -fopenmp
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with openmp and |-fopenmp| flag"
+echo "Parallel MATRIX SYM_CHECK with openmp using |-fopenmp| flag"
 echo "##############################################################"
 ./COMPILED_FILES/sym_openmp 4
 ./COMPILED_FILES/sym_openmp 5
@@ -335,7 +335,7 @@ echo "##############################################################"
 
 gcc sym_check_openmp_threadsv.c -o COMPILED_FILES/sym_openmp_t -fopenmp
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
+echo "Parallel MATRIX SYM_CHECK with openmp using |-fopenmp| flag -> Used to study the effect of different number of threads used"
 echo "##############################################################"
 # ./COMPILED_FILES/sym_openmp_t 4
 # ./COMPILED_FILES/sym_openmp_t 5
