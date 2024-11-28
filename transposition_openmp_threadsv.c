@@ -36,8 +36,8 @@ int main(int argc, char *argv[]) {
 
     //Checking the matrix size
     int exponent = atoi(argv[1]);
-    if (exponent < 2 || exponent > 12) {
-        printf("Matrix size exponent must be between 2 and 12 (recall that the base is 2).\n");
+    if (exponent < 4 || exponent > 12) {
+        printf("Matrix size exponent must be between 4 and 12 (recall that the base is 2).\n");
         return 1;
     }
 
@@ -52,9 +52,10 @@ int main(int argc, char *argv[]) {
         T[i] = (float *)malloc(matrix_size * sizeof(float));
     }
     
-    for(int n = 1; n <= 8; n++) {
+    int number_of_threads = 8;
+    for(int n = 1; n <= number_of_threads; n++) {
         //Setting for the number of threads
-        omp_set_num_threads(8);
+        omp_set_num_threads(n);
 
         //Set the number of iterations to get a better average time
         int total_iterations = 50;

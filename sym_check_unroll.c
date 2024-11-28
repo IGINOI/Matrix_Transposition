@@ -33,8 +33,8 @@ int main(int argc, char *argv[]) {
 
     //Checking the matrix size
     int exponent = atoi(argv[1]);
-    if (exponent < 2 || exponent > 12) {
-        printf("Matrix size exponent must be between 2 and 12 (recall that the base is 2).\n");
+    if (exponent < 4 || exponent > 12) {
+        printf("Matrix size exponent must be between 4 and 12 (recall that the base is 2).\n");
         return 1;
     }
 
