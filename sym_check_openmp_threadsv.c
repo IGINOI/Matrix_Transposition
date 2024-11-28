@@ -48,7 +48,10 @@ int main(int argc, char *argv[]) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    int number_of_threads = 16;
+    // For my windows machine 
+    // int number_of_threads = 8;
+    // For the cluster 
+    int number_of_threads = 32;
     for(int n = 1; n <= number_of_threads; n++) {
         //Setting for the number of threads
         omp_set_num_threads(n);
