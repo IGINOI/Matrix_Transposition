@@ -14,12 +14,13 @@
 
 //initializes the matrix with random values
 void initializeMatrix(float **matrix, int n);
-//transposes the matrix
+//transposes the matrix (CHANGE THE LEVEL OF UNROLLING IN THIS FUNCTION DEFINITION)
 void matTranspose(float **matrix, float **transpose, int n);
 //prints the matrix
 void printMatrix(float **matrix, int n);
 //checks if the matrix is actually transposed
 int matrix_actually_transposed(float **matrix, float **transpose, int n);
+
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 // %%%%%%%%% MAIN FUNCTION %%%%%%%%%% //
