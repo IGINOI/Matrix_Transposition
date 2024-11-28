@@ -4,8 +4,8 @@
 #PBS -N sequential_matrix_transposition
 
 # Output files
-#PBS -o ./results.o
-#PBS -e ./results.e
+#PBS -o ./MainScriptOutput.o
+#PBS -e ./MainScriptErrors.e
 
 # Queue name
 #PBS -q short_cpuQ
@@ -14,7 +14,7 @@
 #PBS -l walltime=01:00:00
 
 # Number of nodes, cpus, mpi processors and amount of memory
-#PBS -l select=1:ncpus=1:mem=128mb
+#PBS -l select=1:ncpus=1:mem=1gb
 
 # Modules for C
 module load gcc91
@@ -146,9 +146,9 @@ echo "##############################################################"
 ./COMPILED_FILES/tra_unroll 11
 ./COMPILED_FILES/tra_unroll 12
 
-gcc transposition_vectorization_4.c -o COMPILED_FILES/tra_vec_4 -O0
+gcc transposition_vectorization_4.c -o COMPILED_FILES/tra_vec_4 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with explicit vectorization (blocks of 4 elements) and |-O0| flag"
+echo "Sequential matrix transposition with explicit vectorization (blocks of 4 elements) and |-O0 -mavx2| flag"
 echo "##############################################################"
 ./COMPILED_FILES/tra_vec_4 2
 ./COMPILED_FILES/tra_vec_4 3
@@ -162,9 +162,9 @@ echo "##############################################################"
 ./COMPILED_FILES/tra_vec_4 11
 ./COMPILED_FILES/tra_vec_4 12
 
-gcc transposition_vectorization_8.c -o COMPILED_FILES/tra_vec_8 -O0
+gcc transposition_vectorization_8.c -o COMPILED_FILES/tra_vec_8 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix transposition with explicit vectorization (blocks of 8 elements) and |-O0| flag"
+echo "Sequential matrix transposition with explicit vectorization (blocks of 8 elements) and |-O0 -mavx2| flags"
 echo "##############################################################"
 ./COMPILED_FILES/tra_vec_8 2
 ./COMPILED_FILES/tra_vec_8 3
@@ -327,9 +327,9 @@ echo "##############################################################"
 ./COMPILED_FILES/sym_unroll 11
 ./COMPILED_FILES/sym_unroll 12
 
-gcc sym_check_vectorization_4.c -o COMPILED_FILES/sym_vec_4 -O0
+gcc sym_check_vectorization_4.c -o COMPILED_FILES/sym_vec_4 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with explicit vectorization (blocks of 4 elements) and |-O0| flag"
+echo "Sequential matrix sym_check with explicit vectorization (blocks of 4 elements) and |-O0 -mavx2| flag"
 echo "##############################################################"
 ./COMPILED_FILES/sym_vec_4 2
 ./COMPILED_FILES/sym_vec_4 3
@@ -343,9 +343,9 @@ echo "##############################################################"
 ./COMPILED_FILES/sym_vec_4 11
 ./COMPILED_FILES/sym_vec_4 12
 
-gcc sym_check_vectorization_8.c -o COMPILED_FILES/sym_vec_8 -O0
+gcc sym_check_vectorization_8.c -o COMPILED_FILES/sym_vec_8 -O0 -mavx2
 echo -e "\n##############################################################"
-echo "Sequential matrix sym_check with explicit vectorization (blocks of 8 elements) and |-O0| flag"
+echo "Sequential matrix sym_check with explicit vectorization (blocks of 8 elements) and |-O0 -mavx2| flags"
 echo "##############################################################"
 ./COMPILED_FILES/sym_vec_8 2
 ./COMPILED_FILES/sym_vec_8 3
@@ -374,3 +374,19 @@ echo "##############################################################"
 ./COMPILED_FILES/sym_openmp 10
 ./COMPILED_FILES/sym_openmp 11
 ./COMPILED_FILES/sym_openmp 12
+
+gcc sym_check_openmp_threadsv.c -o COMPILED_FILES/sym_openmp_t -fopenmp
+echo -e "\n##############################################################"
+echo "Sequential matrix transposition with openmp and |-fopenmp| flag"
+echo "##############################################################"
+./COMPILED_FILES/sym_openmp_t 2
+./COMPILED_FILES/sym_openmp_t 3
+./COMPILED_FILES/sym_openmp_t 4
+./COMPILED_FILES/sym_openmp_t 5
+./COMPILED_FILES/sym_openmp_t 6
+./COMPILED_FILES/sym_openmp_t 7
+./COMPILED_FILES/sym_openmp_t 8
+./COMPILED_FILES/sym_openmp_t 9
+./COMPILED_FILES/sym_openmp_t 10
+./COMPILED_FILES/sym_openmp_t 11
+./COMPILED_FILES/sym_openmp_t 12
