@@ -41,8 +41,6 @@ int main(int argc, char *argv[]) {
     //Calculating the matrix size by shifting by the exponent
     int matrix_size = 1 << exponent;
 
-    printf("Matrix size: %d\n", matrix_size);
-
     //Allocating memory for the matrices M and T
     float **M = (float **)malloc(matrix_size * sizeof(float *));
     for (int i = 0; i < matrix_size; i++) {

@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     // For my windows machine 
     // int number_of_threads = 8;
     // For the cluster 
-    int number_of_threads = 32;
+    int number_of_threads = 16;
     for(int n = 1; n <= number_of_threads; n++) {
         //Setting for the number of threads
         omp_set_num_threads(n);
