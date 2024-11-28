@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 
 int checkSym(float **matrix, int n) {
     int isSymmetric = 1;
-    #pragma omp parallel // for reduction(&&:isSymmetric) schedule(static, 8)
+    #pragma omp parallel for reduction(&&:isSymmetric) schedule(static, 8)
     for (int i = 0; i < n; i++) {
         // #pragma omp simd
         for (int j = 0; j < n; j++) {
