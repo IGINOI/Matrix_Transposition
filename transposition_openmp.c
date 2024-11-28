@@ -51,9 +51,8 @@ int main(int argc, char *argv[]) {
         T[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    
-    int number_of_threads = 8;
     //Set the number of threads
+    int number_of_threads = 8;
     omp_set_num_threads(number_of_threads);
 
     //Set the number of iterations to get a better average time

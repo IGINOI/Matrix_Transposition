@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
         M[i] = (float *)malloc(matrix_size * sizeof(float));
     }
 
-    int number_of_threads = 8;
+    int number_of_threads = 16;
     for(int n = 1; n <= number_of_threads; n++) {
         //Setting for the number of threads
         omp_set_num_threads(n);
