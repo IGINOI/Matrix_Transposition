@@ -66,8 +66,6 @@ int main(int argc, char *argv[]) {
         if (!isRowMajor(M, matrix_size)) {
             printf("Matrix is not stored in row-major order.\n");
             return 1;
-        } else {
-            // printf("Matrix is stored in row-major order.\n");
         }
 
         // Structure to store the time

@@ -64,8 +64,6 @@ int main(int argc, char *argv[]) {
         if (!isRowMajor(M, matrix_size)) {
             printf("Matrix is not stored in row-major order.\n");
             return 1;
-        } else {
-            // printf("Matrix is stored in row-major order.\n");
         }
 
         // Structure to store the time
@@ -88,7 +86,16 @@ int main(int argc, char *argv[]) {
             gettimeofday(&end, NULL);
         #endif
 
-        //printf("Matrix is %s\n", isSymmetric ? "symmetric" : "not symmetric");
+        // I had to add this apparently usless print because 
+        // with flags such as -O1 -O2 and -O3, if the result 
+        // (in this case "is Symmetric") is not used, the 
+        // execution of the function is classified as death 
+        // code and so it is not executed. 
+        if (isSymmetric==1) {
+            printf("");
+        }else{
+            printf("The matrix is not symmetric!");
+        }
 
         //Time elapsed calculation
         seconds = end.tv_sec - start.tv_sec;
