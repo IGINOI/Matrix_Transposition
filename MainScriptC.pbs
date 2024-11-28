@@ -104,9 +104,9 @@ echo "##############################################################"
 ./COMPILED_FILES/tra_seq_vectorize 11
 ./COMPILED_FILES/tra_seq_vectorize 12
 
-gcc transposition_seq.c -o COMPILED_FILES/tra_seq_prefetch -O1 -fprefetch-loop-arrays
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq_prefetch -O1 -fprefetch-loop-interchange
 echo -e "\n##############################################################"
-echo "Sequential MATRIX TRANSPOSITION using |-O1 -fprefetch-loop-arrays| flags"
+echo "Sequential MATRIX TRANSPOSITION using |-O1 -fprefetch-loop-interchange| flags"
 echo "##############################################################"
 ./COMPILED_FILES/tra_seq_prefetch 4
 ./COMPILED_FILES/tra_seq_prefetch 5
