@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
                 gettimeofday(&start, NULL);
             #endif
 
-            //matTranspose(M, T, matrix_size);
+            matTranspose(M, T, matrix_size);
             
             #ifdef _WIN32
                 mingw_gettimeofday(&end, NULL);
