@@ -9,7 +9,7 @@
 - [Contact](#contact)
 
 ## Replication
-I worked in two different enviroments. The idea was also to look at the difference between a controlled envinroment (UNITN Cluster) and a more realistic one (my windows machine).
+I worked in two different enviroments. The idea was also to look at the difference between a controlled envinroment (UNITN Cluster) and a more realistic one (my Windows machine).
 
 ### Windows Machine
 #### Machine Specification
@@ -28,56 +28,59 @@ I worked in two different enviroments. The idea was also to look at the differen
     * Compiler: GCC 9.1
 
 ## Files Explanation
+* MainScriptC.pbs
+    * This is the file that you have to use in order to compile and run all the condes on the cluster in one shot. It is widely commented so it should be easy to use it.
+    * Utilization: qsub -q short_cpuQ MainScriptC.pbs
 * Matrix Transposition files
     * [transposition_seq.c](transposition_seq.c):
-        * description: this file contains the sequential code for the matrix transposition
-        * compilation: gcc seq_matrix_transposition.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the sequential code for the matrix transposition.
+        * compilation: gcc seq_matrix_transposition.c -O0.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [transposition_unroll.c](transposition_unroll.c): 
-        * description: this file contains the explicit optimization using loop unrolling
-        * compilation: gcc par_matrix_transposition_unroll.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the explicit optimization using loop unrolling. To change the level of unrolling there is the need to uncomment the lines in the SymCheck function. I decided to use this method beacause I tought that it was the most intuitive.
+        * compilation: gcc par_matrix_transposition_unroll.c -O0.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [transposition_vectorization_4.c](transposition_vectorization_4.c): 
-        * description: this file contains the explicit parallelization using vectorization of blocks 4*4
-        * compilation: gcc par_matrix_transposition_vectorization_4.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the explicit parallelization using vectorization of blocks 4*4.
+        * compilation: gcc par_matrix_transposition_vectorization_4.c -O0.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [transposition_vectorization_8.c](transposition_vectorization_8.c): 
-        * description: this file uses explicit parallilazion using vectorization of blocks 8*8 
-        * compilation: gcc par_matrix_transposition_vectorization_8.c -O0 -mavx2
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file uses explicit parallilazion using vectorization of blocks 8*8.
+        * compilation: gcc par_matrix_transposition_vectorization_8.c -O0 -mavx2.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [transposition_openmp.c](transposition_openmp.c)
-        * description: this file contains implicit parallelization through openMP
-        * compilation: gcc par_matrix_transposition_openmp.c -fopenmp
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains implicit parallelization through openMP. To see the differece that is possible to get with all the conmbinations of directives that I tried there is the need to uncomment them in the code.
+        * compilation: gcc par_matrix_transposition_openmp.c -fopenmp.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [transposition_openmp_threadsv.c](transposition_openmp_threadsv.c)
-        * description: this file contains the code to look how different numbers of thread influence on the execution time
-        * compilation: gcc transposition_openmp_threadsv.c -fopenmp
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the code to look how different numbers of thread influence on the execution time.
+        * compilation: gcc transposition_openmp_threadsv.c -fopenmp.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
 * Matrix Symmetry Check files
     * [sym_check_seq.c](sym_check_seq.c): 
-        * description: this file contains the sequential code for the matrix symmetry check
-        * compilation: gcc sym_check_seq.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the sequential code for the matrix symmetry check.
+        * compilation: gcc sym_check_seq.c -O0.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [sym_check_unroll.c](sym_check_unroll.c):
-        * description: this file contains the explicit optimization using loop unrolling
-        * compilation: gcc sym_check_unroll.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the explicit optimization using loop unrolling. To change the level of unrolling there is the need to uncomment the lines in the SymCheck function. I decided to use this method beacause I tought that it was the most intuitive.
+        * compilation: gcc sym_check_unroll.c -O0.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [sym_check_vectorization_4.c](sym_check_vectorization_4.c):
-        * description: this file contains the explicit parallelization using vectorization of array of 4 items
-        * compilation: gcc sym_check_vectorization_4.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the explicit parallelization using vectorization of array of 4 items.
+        * compilation: gcc sym_check_vectorization_4.c -O0.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [sym_check_vectorization_8.c](sym_check_vectorization_8.c):
-        * description: this file contains the explicit parallelization using vectorization of array of 8 items
-        * compilation: gcc sym_check_vectorization_8.c -O0 -mavx2
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the explicit parallelization using vectorization of array of 8 items.
+        * compilation: gcc sym_check_vectorization_8.c -O0 -mavx2.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [sym_check_openmp.c](sym_check_openmp.c):
-        * description: this file contains implicit parallelization through openMP
-        * compilation: gcc sym_check_openmp.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains implicit parallelization through openMP.To see the differece that is possible to get with all the conmbinations of directives that I tried there is the need to uncomment them in the code.
+        * compilation: gcc sym_check_openmp.c -fopenmp.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
     * [sym_check_openmp_threadsv.c](sym_check_openmp_threadsv.c):
-        * description: this file contains the code to look how different numbers of thread influence on the execution time
-        * compilation: gcc sym_check_openmp_threadsv.c -O0
-        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12
+        * description: this file contains the code to look how different numbers of thread influence on the execution time.
+        * compilation: gcc sym_check_openmp_threadsv.c -fopenmp.
+        * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
 
 ## Contact
 email: davide.facchinelli@studenti.unitn.it
