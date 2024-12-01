@@ -116,9 +116,10 @@ int checkSym(float **matrix, int n) {
     int isSymmetric = 1;
     #pragma omp parallel for reduction(&:isSymmetric) schedule(static, 8)
     for (int i = 0; i < n; i++) {
-        #pragma omp simd
+        // #pragma omp simd
         for (int j = 0; j < n; j++) {
             if (matrix[i][j] != matrix[j][i]) {
+                #pragma omp atomic write
                 isSymmetric = 0;
             }
         }

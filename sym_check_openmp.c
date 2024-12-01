@@ -117,6 +117,7 @@ int checkSym(float **matrix, int n) {
         // #pragma omp simd
         for (int j = 0; j < n; j++) {
             if (matrix[i][j] != matrix[j][i]) {
+                #pragma omp atomic write
                 isSymmetric = 0;
             }
         }
