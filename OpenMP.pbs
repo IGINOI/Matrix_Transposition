@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Job name
-#PBS -N sequential_matrix_transposition
+#PBS -N OpenMP_Matrix_Transposition
 
 # Output files
-#PBS -o ./MainScriptOutput.o
-#PBS -e ./MainScriptErrors.e
+#PBS -o ./OpenMP_Matrix_Transposition.o
+#PBS -e ./OpenMP_Matrix_Transposition.e
 
 # Queue name
 #PBS -q short_cpuQ

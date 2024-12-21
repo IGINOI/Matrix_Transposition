@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Job name
+#PBS -N MPI_Matrix_Transposition_Analysis
+
+# Output files
+#PBS -o ./MPI_Matrix_Transposition_Analysis.o
+#PBS -e ./MPI_Matrix_Transposition_Analysis.e
+
+# Queue name
+#PBS -q short_cpuQ
+
+# Set the maximum wall time
+#PBS -l walltime=01:00:00
+
+# Number of nodes, cpus, mpi processors and amount of memory
+#PBS -l select=1:ncpus=32:mem=1gb

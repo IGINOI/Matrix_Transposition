@@ -27,10 +27,15 @@ I worked in two different enviroments. The idea was also to look at the differen
 * Software Environment
     * Compiler: GCC 9.1
 
-## Files Explanation
-* MainScriptC.pbs
-    * This is the file that you have to use in order to compile and run all the condes on the cluster in one shot. It is widely commented so it should be easy to use it.
-    * Utilization: qsub -q short_cpuQ MainScriptC.pbs
+## Files Explanation, Compilation and Run instructions
+In order to compile and run the files you have two different choices. If you are in the cluster you can use the MainScript.pbs, alternatively you can run the file that you are interested in separately.
+* PBS files for Cluster
+    * [OpenMP.pbs](OpenMP.pbs)
+        * This is the file that you have to use to compile and run all the codes that are used to analyze the Implicit and Explicit Optimization on the cluster in one shot. It is widely commented so it should be easy to use it.
+        * Utilization: qsub -q short_cpuQ OpenMP.pbs
+    * [MPI.pbs](MPI.pbs)
+        * This is the file that you have to use to compile and run all the codes that are used to analyze MPI directives and characteristics on the cluster in one shot. It is widely commented so it should be easy to use it.
+        * Utilization: qsub -q short_cpuQ MPI.pbs
 * Matrix Transposition files
     * [transposition_seq.c](transposition_seq.c):
         * description: this file contains the sequential code for the matrix transposition.
@@ -82,5 +87,6 @@ I worked in two different enviroments. The idea was also to look at the differen
         * compilation: gcc sym_check_openmp_threadsv.c -fopenmp.
         * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
 
+ 
 ## Contact
 email: davide.facchinelli@studenti.unitn.it
