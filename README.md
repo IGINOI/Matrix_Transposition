@@ -9,21 +9,33 @@
 - [Contact](#contact)
 
 ## Replication
-I worked in two different enviroments. The idea was also to look at the difference between a controlled envinroment (UNITN Cluster) and a more realistic one (my Windows machine).
+For both the first and the second part of the project I worked on two different environment. I used a Windows system (the one mounted on my machine) with the objective of debugging and testing the codes, while a Linux one (the one mounted on the UNITN Cluster) with the objective of collecting actual data for the project. Here below you can find the instructions to replicate both the environments. 
 
 ### Windows Machine
-#### Machine Specification
 * Hardware:
-    * CPU: Intel(R) Core(TM) i7-1165G7, 4 cores, Base speer: 2.8 GHz .
-    * RAM: 16 GB.
-    * Storage: 512 GB SSD with 200 GB free.
+    * CPU: Intel(R) Core(TM) i7-1165G7, 4 cores, Base speer: 2.8 GHz
+    * RAM: 16 GB
+    * Storage: 512 GB SSD
 * Operating System:
-    * Name and Version: Windows 11, version 23H2.
-    * Architecture: 64-bit.
+    * Name and Version: Windows 11, version 23H2
+    * Architecture: 64-bit
 * Software Environment
-    * Compiler: GCC 13.2.0 via MinGW-w64 (Built by MSYS2 project).
+    * Compiler: GCC 13.2.0 via MinGW-w64 (Built by MSYS2 project)
 
 ### UNITN Cluster
+* Hardware:
+    * CPU: 96 Intel(R) Xeon(R) Gold 6252N CPU @ 2.30GHz
+    * Thread(s) per core: 1
+    * Core(s) per socket: 24
+    * Socket(s): 4
+    * L1d cache: 32K
+    * L1i cache: 32K
+    * L2 cache: 1024K
+    * L3 cache: 36608K
+    * RAM: 1.1TB
+* Operating System:
+    * Name and Version: CentOS Linux, version 7
+    * Architecture: 64-bit
 * Software Environment
     * Compiler: GCC 9.1
 
