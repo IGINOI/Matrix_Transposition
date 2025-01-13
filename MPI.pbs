@@ -14,4 +14,17 @@
 #PBS -l walltime=01:00:00
 
 # Number of nodes, cpus, mpi processors and amount of memory
-#PBS -l select=1:ncpus=32:mem=1gb
+#PBS -l select=1:ncpus=69:mem=1gb
+
+# Modules for C
+module load gcc91
+gcc() {
+    gcc-9.1.0 "$@"
+}
+gcc --version
+
+# Select the working directory
+cd /home/davide.facchinelli/PCL/DE2
+
+# Create the directory for the compiled files if it does not already exists
+mkdir -p COMPILED_FILES
