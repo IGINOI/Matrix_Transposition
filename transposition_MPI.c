@@ -8,10 +8,9 @@
 #include <sys/time.h>
 #endif
 
-void initializeMatrix(float *matrix, int n);
-void printFlatMatrix(float *matrix, int n);
-void printNormalMatrix(float **matrix, int n);
-int matrix_actually_transposed(float *matrix, float **transpose, int n);
+void initializeMatrix(float **matrix, int n);
+void printMatrix(float **matrix, int n);
+int matrixActuallyTransposed(float **matrix, float **transpose, int n);
 
 int main(int argc, char *argv[]) {
 
@@ -80,15 +79,22 @@ int main(int argc, char *argv[]) {
 
     // Only rank 0 needs this matrix
     // Initial matrix
-    float *M = NULL;
+    float *M_flat = NULL;
+    float **M = (float **)malloc(matrix_size * sizeof(float *));
     float **T = (float **)malloc(matrix_size * sizeof(float *));
 
     if (rank == 0) {
-        M = malloc(matrix_size * matrix_size * sizeof(float));
+        M_flat = malloc(matrix_size * matrix_size * sizeof(float));
         for (int i = 0; i < matrix_size; i++) {
             T[i] = (float *)malloc(matrix_size * sizeof(float));
+            M[i] = (float *)malloc(matrix_size * sizeof(float));
         }
         initializeMatrix(M, matrix_size);
+        for(int i=0; i<matrix_size; i++) {
+            for(int j=0; j<matrix_size; j++) {
+                M_flat[i*matrix_size+j] = M[i][j];
+            }
+        }
     }
 
     //Every process need a local matrix, local transpose and the gathered matrix
@@ -103,7 +109,11 @@ int main(int argc, char *argv[]) {
     // SCATTERING THE MATRIX //
     ///////////////////////////
 
-    MPI_Scatterv(M, elements_per_process, displs, MPI_FLOAT, local_matrix, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
+    printf("Rank %d reached barrier 1\n", rank);
+
+    MPI_Scatterv(M_flat, elements_per_process, displs, MPI_FLOAT, local_matrix, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
+
+    printf("Rank %d reached barrier 2\n", rank);
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -146,8 +156,6 @@ int main(int argc, char *argv[]) {
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
-    printf("RANK %d PASSED BARRIER 1 \n", rank);
-
 
     /////////////////////////////////////
     // GATHERING PARTIAL TRANSPOSITION //
@@ -156,8 +164,6 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < matrix_size; i++) {
         MPI_Gatherv(local_transpose[i], rows_per_process[rank], MPI_FLOAT, T[i], rows_per_process, gather_displs, MPI_FLOAT, 0, MPI_COMM_WORLD);
     }
-
-    printf("RANK %d PASSED BARRIER 2 \n", rank);
     MPI_Barrier(MPI_COMM_WORLD);
 
 
@@ -169,11 +175,11 @@ int main(int argc, char *argv[]) {
         printf("RANK 0 REACHED CHECKING PART \n", rank);
 
         printf("Original Matrix:\n");
-        printFlatMatrix(M, matrix_size);
+        printMatrix(M, matrix_size);
         printf("Transposed Matrix:\n");
-        printNormalMatrix(T, matrix_size);
+        printMatrix(T, matrix_size);
 
-        if (matrix_actually_transposed(M, T, matrix_size)) {
+        if (matrixActuallyTransposed(M, T, matrix_size)) {
             printf("Matrix transposed successfully.\n");
         } else {
             printf("Matrix transposition failed.\n");
@@ -185,7 +191,6 @@ int main(int argc, char *argv[]) {
     //////////////////
     // FREE PROCESS //
     //////////////////
-    printf("RANK %d REACED FREEING MEMORY PART \n", rank);
 
     for (int i = 0; i < matrix_size; i++) {
         free(local_transpose[i]);
@@ -201,11 +206,13 @@ int main(int argc, char *argv[]) {
     if(rank == 0) {
         for (int i = 0; i < matrix_size; i++) {
             free(T[i]);
+            free(M[i]);
         }
-        free(M);
+        free(M_flat);
     }
 
     free(T);
+    free(M);
 
     //////////////////
     // MPI FINILIZE //
@@ -215,24 +222,15 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
-void initializeMatrix(float *matrix, int n) {
+void initializeMatrix(float **matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            matrix[i+j*n] = (float)rand() / RAND_MAX * 10.0f;
+            matrix[i][j] = (float)rand() / RAND_MAX * 10.0f;
         }
     }
 }
 
-void printFlatMatrix(float *matrix, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            printf("%6.2f ", matrix[i*n+j]);
-        }
-        printf("\n");
-    }
-}
-
-void printNormalMatrix(float **matrix, int n) {
+void printMatrix(float **matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             printf("%6.2f ", matrix[i][j]);
@@ -241,12 +239,11 @@ void printNormalMatrix(float **matrix, int n) {
     }
 }
 
-int matrix_actually_transposed(float *matrix, float **transpose, int n) {
+int matrixActuallyTransposed(float **matrix, float **transpose, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            if (matrix[i*n+j] != transpose[j][i]) {
+            if (matrix[i][j] != transpose[j][i]) {
                 return 0;
-                printf("The value [%d][%d] in the original matrix is not equal to the value [%d][%d] in the transposed matrix.", i, j, j, i);
             }
         }
     }
