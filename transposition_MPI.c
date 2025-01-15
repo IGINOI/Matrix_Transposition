@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
         }
     }
     int exponent = atoi(argv[1]);
-    if (exponent < 2 || exponent > 12) {
+    if (exponent < 4 || exponent > 12) {
         if (rank == 0) {
             printf("Matrix size exponent must be between 4 and 12 (base is 2).\n");
         }
