@@ -14,8 +14,12 @@
 // %%%%% FUNCTIONS DECLARATION %%%%%% //
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
+// Function that initializes the matrix with random values
 void initializeSymmetricMatrix(float **matrix, int n);
+// Function that prints the original matrix
 void printMatrix(float **matrix, int n);
+// Functions that checks if the matrix is symmetric using MPI
+void checkSym(float *M_flat, int matrix_size, int start_index_local, int stop_index_local, int *start_indexes, int *stop_indexes);
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
@@ -67,13 +71,15 @@ int main(int argc, char *argv[]) {
         }
     }
 
+
     // ------------------------------------------------ //
     // ------------- MATRICES ALLOCATIONS ------------- //
     // ------------------------------------------------ //
 
-    // Matrices for only rank 0 that will be broadcasted in the future
-    float *M_flat = malloc(matrix_size * matrix_size * sizeof(float));
+    // M is the matrix declares as duble pointer to ensure continuity with the previous codes 
     float **M = (float **)malloc(matrix_size * sizeof(float *));
+    // M_flat is the matrix flattened out
+    float *M_flat = malloc(matrix_size * matrix_size * sizeof(float));
 
     if (rank == 0) {
         for (int i = 0; i < matrix_size; i++) {
@@ -83,14 +89,13 @@ int main(int argc, char *argv[]) {
 
     
     // ------------------------------------------------ //
-    // ------------ SCATTERING THE MATRIX ------------- //
+    // ------------ MATRIX SYMMETRY CHECK ------------- //
     // ------------------------------------------------ //
 
-    //for loop to compute an average time
-    double total_time = 0.0;
+    //Set the number of interations to have an average time
     int iterations = 1;
+    double total_time = 0.0;
 
-    MPI_Barrier(MPI_COMM_WORLD);
 
     for(int i = 0; i < iterations; i++){
 
@@ -103,59 +108,24 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        //printing the matrix
-        if(rank == 0) {
-            printf("The original matrix is:\n");
-            printMatrix(M, matrix_size);
-        }
+        // REMOVE COMMENTS TO CHECK IF THE MATRIX IS ACTUALLY SYMMETRIC OR NOT
+        // if(rank == 0) {
+        //     printf("The original matrix is:\n");
+        //     printMatrix(M, matrix_size);
+        // }
         
-        // Process synchronization befor starting transposition
+        // Synchronize processes before starting taking the time
         MPI_Barrier(MPI_COMM_WORLD);
         double start_time = MPI_Wtime();
 
-        // Broadcast of the entire matrix to all the processes
-        MPI_Bcast(M_flat, matrix_size * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
+        // Call checkSym function to check if the matrix is symmetric
+        checkSym(M_flat, matrix_size, start_index_local, stop_index_local, start_indexes, stop_indexes);
 
-        // Scatter the informations about initial index and final index
-        MPI_Scatter(start_indexes, 1, MPI_INT, &start_index_local, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        MPI_Scatter(stop_indexes, 1, MPI_INT, &stop_index_local, 1, MPI_INT, 0, MPI_COMM_WORLD);
-        
-       
-        printf("Rank %d: start_indexes = %d, stop_indexes = %d\n", rank, start_index_local, stop_index_local);
-
-
-        // ------------------------------------------------ //
-        // ---------- LOCAL MATRIX SYM CHECK -------------- //
-        // ------------------------------------------------ //
-        int is_symmetric_local = 1;
-        for (int i = start_index_local; i <= stop_index_local; i++) { 
-            for (int j = 0; j < matrix_size; j++) { 
-                if(M_flat[i * matrix_size + j] != M_flat[j * matrix_size + i]){ 
-                    printf("I am here shit\n");
-                    is_symmetric_local = 0;
-                    break;
-                } 
-            } 
-        }
-
-        printf("RANK %d REACHES POINT POINT 1\n", rank);
-
-        
-        int is_symmetric_global = 1;
-        MPI_Reduce(&is_symmetric_local, &is_symmetric_global, 1, MPI_INT, MPI_PROD, 0, MPI_COMM_WORLD);
-        if (is_symmetric_global==0){
-            MPI_Abort(MPI_COMM_WORLD, 1);
-        }        
-        
-
-        // Synchronize after each repetition
-        MPI_Barrier(MPI_COMM_WORLD);
         double end_time = MPI_Wtime();
 
         // Compute the total time
-        double elapsed_time = end_time - start_time;
         if (rank == 0) {
-            total_time += elapsed_time;
+            total_time += end_time - start_time;
         }
 
         // Synchronize before starting a new loop cycle 
@@ -197,10 +167,10 @@ int main(int argc, char *argv[]) {
 void initializeSymmetricMatrix(float **matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            // float x = (float)rand() / RAND_MAX * 10.0f;
-            // matrix[i][j] = x;
-            // matrix[j][i] = x;
-            matrix[i][j] = (float)rand() / RAND_MAX * 10.0f;
+            float x = (float)rand() / RAND_MAX * 10.0f;
+            matrix[i][j] = x;
+            matrix[j][i] = x;
+            //matrix[i][j] = (float)rand() / RAND_MAX * 10.0f;
         }
     }
 }
@@ -211,5 +181,36 @@ void printMatrix(float **matrix, int n) {
             printf("%6.2f ", matrix[i][j]);
         }
         printf("\n");
+    }
+}
+
+void checkSym(float *M_flat, int matrix_size, int start_index_local, int stop_index_local, int *start_indexes, int *stop_indexes) {
+    
+    // Broadcast of the entire matrix to all the processes
+    MPI_Bcast(M_flat, matrix_size * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
+
+    // Scatter the informations about initial index and final index
+    MPI_Scatter(start_indexes, 1, MPI_INT, &start_index_local, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Scatter(stop_indexes, 1, MPI_INT, &stop_index_local, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    // ------------------------------------------------ //
+    // ---------- LOCAL MATRIX SYM CHECK -------------- //
+    // ------------------------------------------------ //
+    int is_symmetric_local = 1;
+    for (int i = start_index_local; i <= stop_index_local; i++) { 
+        for (int j = 0; j < matrix_size; j++) { 
+            if(M_flat[i * matrix_size + j] != M_flat[j * matrix_size + i]){ 
+                is_symmetric_local = 0;
+                break;
+            } 
+        } 
+    }
+
+    // Reducing the local results to a global result
+    int is_symmetric_global = 1;
+    MPI_Reduce(&is_symmetric_local, &is_symmetric_global, 1, MPI_INT, MPI_PROD, 0, MPI_COMM_WORLD);
+    if (is_symmetric_global==0){
+        printf("\n\n\n THE MATRIX IS NOT SYMMETRIC \n\n\n");
+        MPI_Abort(MPI_COMM_WORLD, 1);
     }
 }
