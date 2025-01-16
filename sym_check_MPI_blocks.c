@@ -347,11 +347,22 @@ int main(int argc, char *argv[]) {
 
     free(M);
 
+    // ---
+    // METHOD 1 -> MPI_Type_vector + Scatter
+    // ---
+    // MPI_Type_free(&column_type);
+
+    // ---
+    // METHOD 2 -> MPI_Type_create_subarray + Scatter
+    // ---
+    // MPI_Type_free(&column_type);
+
+    // ---
+    // METHOD 3 -> vector of MPI_Type_create_subarray + Scatter
+    // ---
     // for (int i = 0; i < size; i++) {
     //     MPI_Type_free(&column_types[i]);
     // }
-
-    MPI_Type_free(&column_type);
 
     MPI_Finalize();
     return 0;
