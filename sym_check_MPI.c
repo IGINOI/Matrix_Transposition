@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
         for(int i = 0; i < size; i++) {
             start_indexes[i] = i * base_local_rows;
-            stop_indexes[i] = (i == size - 1) ? matrix_size-1 : (i + 1) * base_local_rows - 1;
+            stop_indexes[i] = (i == size - 1) ? matrix_size-1 : (i + 1) * base_local_rows-1;
         }
     }
 
@@ -127,33 +127,38 @@ int main(int argc, char *argv[]) {
         // ------------------------------------------------ //
         // ---------- LOCAL MATRIX SYM CHECK -------------- //
         // ------------------------------------------------ //
-        for (int i = 0; i < start_index_local; i++) { 
-            for (int j = 0; j < stop_index_local; j++) { 
+        int is_symmetric_local = 1;
+        for (int i = start_index_local; i <= stop_index_local; i++) { 
+            for (int j = 0; j < matrix_size; j++) { 
                 if(M_flat[i * matrix_size + j] != M_flat[j * matrix_size + i]){ 
-                    printf("The non symmetric index is: %d, %d\n", i, j);
-                    MPI_Abort(MPI_COMM_WORLD, 1); 
+                    printf("I am here shit\n");
+                    is_symmetric_local = 0;
+                    break;
                 } 
             } 
         }
 
-        // ------------------------------------------------ //
-        // -------- GATHERING PARTIAL TRANSPOSITION ------- //
-        // ------------------------------------------------ //
+        printf("RANK %d REACHES POINT POINT 1\n", rank);
 
-        for(int i = 0; i < matrix_size; i++) {
-            // Reducing the result with AND operation
-        }
+        
+        int is_symmetric_global = 1;
+        MPI_Reduce(&is_symmetric_local, &is_symmetric_global, 1, MPI_INT, MPI_PROD, 0, MPI_COMM_WORLD);
+        if (is_symmetric_global==0){
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }        
+        
 
         // Synchronize after each repetition
         MPI_Barrier(MPI_COMM_WORLD);
         double end_time = MPI_Wtime();
 
-        // Compute the total time and check correctness
+        // Compute the total time
         double elapsed_time = end_time - start_time;
         if (rank == 0) {
             total_time += elapsed_time;
         }
 
+        // Synchronize before starting a new loop cycle 
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
@@ -192,10 +197,10 @@ int main(int argc, char *argv[]) {
 void initializeSymmetricMatrix(float **matrix, int n) {
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            float x = (float)rand() / RAND_MAX * 10.0f;
-            matrix[i][j] = x;
-            matrix[j][i] = x;
-            // matrix[i][j] = (float)rand() / RAND_MAX * 10.0f;
+            // float x = (float)rand() / RAND_MAX * 10.0f;
+            // matrix[i][j] = x;
+            // matrix[j][i] = x;
+            matrix[i][j] = (float)rand() / RAND_MAX * 10.0f;
         }
     }
 }
