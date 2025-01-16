@@ -50,82 +50,36 @@ int main(int argc, char *argv[]) {
 
     // Matrix size computation
     int matrix_size = 1 << exponent;
-    // Number of r
     int base_local_rows = matrix_size / size;
 
-    
-    // ------------------------------------------------ //
-    //  VARIABLE COMPUTATION FOR SCATTERV AND GATHERV - //
-    // ------------------------------------------------ //
+    int *start_indexes = NULL;
+    int *stop_indexes = NULL;
+    int start_index_local;
+    int stop_index_local;
 
-    int *rows_per_process = malloc(size * sizeof(int));
-    int *columns_per_process = malloc(size * sizeof(int));
+    if(rank==0){
+        start_indexes = malloc(size * sizeof(int));
+        stop_indexes = malloc(size * sizeof(int));
 
-    int *rows_elements_per_process = malloc(size * sizeof(int));
-    int *columns_elements_per_process = malloc(size * sizeof(int));
-    
-    int *rows_scatter_displs = malloc(size * sizeof(int));
-    int *columns_scatter_displs = malloc(size * sizeof(int));
-
-    for (int i = 0; i < size; i++) {
-        // Compute displacements for rows
-        rows_per_process[i] = base_local_rows + ((i == size - 1) ? matrix_size % size : 0);
-        rows_elements_per_process[i] = rows_per_process[i] * matrix_size;
-        rows_scatter_displs[i] = (i == 0) ? 0 : rows_scatter_displs[i - 1] +  rows_per_process[i - 1]*matrix_size;
+        for(int i = 0; i < size; i++) {
+            start_indexes[i] = i * base_local_rows;
+            stop_indexes[i] = (i == size - 1) ? matrix_size-1 : (i + 1) * base_local_rows - 1;
+        }
     }
-
-
-    // ---
-    // METHOD 1 -> MPI_Type_vector + Scatter
-    // ---
-    // MPI_Datatype column_type;
-    // MPI_Type_vector(8, 1, 16, MPI_FLOAT, &column_type);
-    // MPI_Type_commit(&column_type);
-
-    // ---
-    // METHOD 2 -> MPI_Type_create_subarray + Scatter
-    // ---
-    // MPI_Datatype column_type;
-    // int sizes[2] = {16, 16}; // Size of the global array (rows, columns) 
-    // int subsizes[2] = {16, 8}; // Size of the subarray (rows, columns) 
-    // int starts[2] = {0, rank * rows_per_process[rank]}; // Starting point of the subarray (rows, columns)  
-    // MPI_Type_create_subarray(2, sizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &column_type);
-    // MPI_Type_commit(&column_type);
-
-    // ---
-    // METHOD 3 -> vector of MPI_Type_create_subarray + Scatter
-    // ---
-    // MPI_Datatype column_types[size];
-    // int sizes[2] = {16, 16};
-    // for (int i = 0; i < size; i++) { // Define the local subarray sizes (rows, columns) for each process 
-    //     int subsizes[2] = {16, 8}; // Define the starting point of each subarray (rows, columns) for each process 
-    //     int starts[2] = {0, i * 8}; // Create the subarray datatype for each process 
-    //     MPI_Type_create_subarray(2, sizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &column_types[i]); 
-    //     MPI_Type_commit(&column_types[i]); 
-    // }
-
-
-    
-
 
     // ------------------------------------------------ //
     // ------------- MATRICES ALLOCATIONS ------------- //
     // ------------------------------------------------ //
 
-    // Matrices for only rank 0
-    float *M_flat = NULL;
+    // Matrices for only rank 0 that will be broadcasted in the future
+    float *M_flat = malloc(matrix_size * matrix_size * sizeof(float));
     float **M = (float **)malloc(matrix_size * sizeof(float *));
 
     if (rank == 0) {
-        M_flat = malloc(matrix_size * matrix_size * sizeof(float));
         for (int i = 0; i < matrix_size; i++) {
             M[i] = (float *)malloc(matrix_size * sizeof(float));
         }
     }
-
-    // Matrices for all the ranks
-    float *local_rows = malloc(rows_per_process[rank] * matrix_size * sizeof(float));
-    float *local_columns = malloc(rows_per_process[rank] * matrix_size * sizeof(float));
 
     
     // ------------------------------------------------ //
@@ -155,138 +109,32 @@ int main(int argc, char *argv[]) {
             printMatrix(M, matrix_size);
         }
         
-        MPI_Barrier(MPI_COMM_WORLD);
         // Process synchronization befor starting transposition
+        MPI_Barrier(MPI_COMM_WORLD);
         double start_time = MPI_Wtime();
 
+        // Broadcast of the entire matrix to all the processes
+        MPI_Bcast(M_flat, matrix_size * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
 
-        MPI_Scatterv(M_flat, rows_elements_per_process, rows_scatter_displs, MPI_FLOAT, local_rows, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
+        // Scatter the informations about initial index and final index
+        MPI_Scatter(start_indexes, 1, MPI_INT, &start_index_local, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Scatter(stop_indexes, 1, MPI_INT, &stop_index_local, 1, MPI_INT, 0, MPI_COMM_WORLD);
         
-        // ---
-        // Method 1 -> MPI_Type_vector + Scatter
-        // ---
-        // Scattering around rows
-        //MPI_Scatter(M_flat, 1, column_type, local_columns, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
-
-        // ---
-        // Method 2 -> MPI_Type_create_subarray + Scatter
-        // ---
-        //MPI_Scatter(M_flat, 1, column_type, local_columns, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
-
-        // ---
-        // Method 3 -> vector of MPI_Type_create_subarray + Scatter
-        // ---
-        // for (int i = 0; i < size; i++) { 
-        //     MPI_Scatter(M_flat, 1, column_types[i], local_columns, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD); 
-        // }
-
-
-
-        
-        if (rank == 0) {
-            sleep(2);
-            printf("\n\n\n");
-            printf("Rank %d in row-major order\n", rank);
-            
-            for (int i = 0; i < rows_per_process[rank]; i++) {
-                for (int j = 0; j < matrix_size; j++) {
-                    printf("%6.2f", local_rows[i * matrix_size + j]);
-                }
-                printf("\n");
-            }
-
-            // for (int i = 0; i < 128; i++) {
-            //     printf("%6.2f", local_rows[i]);
-            // }
-
-            sleep(2);
-            printf("\n\n\n");
-            printf("Rank %d in column-major order\n", rank);
-            
-            for (int i = 0; i < matrix_size; i++) {
-                for (int j = 0; j < rows_per_process[rank]; j++) {
-                    printf("%6.2f", local_columns[i * rows_per_process[rank] + j]);
-                }
-                printf("\n");
-            } 
-
-            // for (int i = 0; i < 128; i++) {
-            //     printf("%6.2f", local_columns[i]);
-            // }
-            
-            sleep(2);
-            printf("\n\n\n");
-        }
-
-        MPI_Barrier(MPI_COMM_WORLD);
-
-        if (rank == 1) {
-            sleep(2);
-            printf("\n\n\n");
-            printf("Rank %d in row-major order\n", rank);
-            
-            for (int i = 0; i < rows_per_process[rank]; i++) {
-                for (int j = 0; j < matrix_size; j++) {
-                    printf("%6.2f", local_rows[i * matrix_size + j]);
-                }
-                printf("\n");
-            }
-
-            // for (int i = 0; i < 128; i++) {
-            //     printf("%6.2f", local_rows[i]);
-            // }
-
-
-            sleep(2);
-            printf("\n\n\n");
-            printf("Rank %d in column-major order\n", rank);
-            
-            for (int i = 0; i < matrix_size; i++) {
-                for (int j = 0; j < rows_per_process[rank]; j++) {
-                    printf("%6.2f", local_columns[i * rows_per_process[rank] + j]);
-                }
-                printf("\n");
-            } 
-
-            // for (int i = 0; i < 128; i++) {
-            //     printf("%6.2f", local_columns[i]);
-            // }
-            
-            sleep(2);
-            printf("\n\n\n");
-        }
-
-        MPI_Barrier(MPI_COMM_WORLD);
-
-
+       
+        printf("Rank %d: start_indexes = %d, stop_indexes = %d\n", rank, start_index_local, stop_index_local);
 
 
         // ------------------------------------------------ //
         // ---------- LOCAL MATRIX SYM CHECK -------------- //
         // ------------------------------------------------ //
-        for (int i = 0; i < rows_per_process[rank]; i++) { 
-            for (int j = 0; j < matrix_size; j++) { 
-                if(local_rows[i * matrix_size + j] != local_columns[i * matrix_size + j]){ 
-                    printf("From rank %d I got that local_rows_elements is: %6.2f and local_column element is: %6.2f \n", rank, local_rows[i * matrix_size + j], local_columns[j * columns_per_process[rank] + i]);
+        for (int i = 0; i < start_index_local; i++) { 
+            for (int j = 0; j < stop_index_local; j++) { 
+                if(M_flat[i * matrix_size + j] != M_flat[j * matrix_size + i]){ 
+                    printf("The non symmetric index is: %d, %d\n", i, j);
                     MPI_Abort(MPI_COMM_WORLD, 1); 
                 } 
             } 
         }
-        
-        // Printing local transposed matrices to see if they are correctly transposed
-        // for (int i = 0; i < size; i++) {
-        //     if (rank == i) {
-        //         printf("Rank %d\n", rank);
-        //         for (int i = 0; i < matrix_size; i++) {
-        //             for (int j = 0; j < rows_per_process[rank]; j++) {
-        //                 printf("%6.2f", local_transpose[i][j]);
-        //             }
-        //             printf("\n");
-        //         }
-        //     }
-        //     MPI_Barrier(MPI_COMM_WORLD);
-        // }
-
 
         // ------------------------------------------------ //
         // -------- GATHERING PARTIAL TRANSPOSITION ------- //
@@ -304,13 +152,6 @@ int main(int argc, char *argv[]) {
         double elapsed_time = end_time - start_time;
         if (rank == 0) {
             total_time += elapsed_time;
-
-            // Check for correct transposition
-            // if (matrixActuallyTransposed(M, T, matrix_size)) {
-            //     printf("Matrix transposed successfully.\n");
-            // } else {
-            //     printf("Matrix transposition failed.\n");
-            // }
         }
 
         MPI_Barrier(MPI_COMM_WORLD);
@@ -328,30 +169,16 @@ int main(int argc, char *argv[]) {
     // ----------------- FREE MEMORY ------------------ //
     // ------------------------------------------------ //
 
-    free(rows_per_process);
-    free(columns_per_process);
-    free(rows_scatter_displs);
-    free(columns_scatter_displs);
-    free(rows_elements_per_process);
-    free(columns_elements_per_process);
-
-    free(local_rows);
-    free(local_columns);
+    free(start_indexes);
+    free(stop_indexes);
 
     if(rank == 0) {
         for (int i = 0; i < matrix_size; i++) {
             free(M[i]);
         }
-        free(M_flat);
     }
-
+    free(M_flat);
     free(M);
-
-    // for (int i = 0; i < size; i++) {
-    //     MPI_Type_free(&column_types[i]);
-    // }
-
-    MPI_Type_free(&column_type);
 
     MPI_Finalize();
     return 0;
