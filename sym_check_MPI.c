@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
     // ------------------------------------------------ //
     if (rank == 0) {
         double average_time = total_time / iterations;
-        printf("Average time for symmetry check: %f seconds\n", average_time);
+        printf("Average time for %d * %d matrix symmetry check: %f ms\n", matrix_size, matrix_size, average_time*1000);
     }
 
     // ------------------------------------------------ //

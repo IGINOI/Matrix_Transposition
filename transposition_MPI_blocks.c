@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
     // ------------------------------------------------ //
     if (rank == 0) {
         double average_time = total_time / iterations;
-        printf("Average time for matrix transposition: %f seconds\n", average_time);
+        printf("Average time for %d * %d matrix transposition: %f ms\n", matrix_size, matrix_size, average_time*1000);
     }
 
     // ------------------------------------------------ //
@@ -189,6 +189,7 @@ int main(int argc, char *argv[]) {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
 void initializeMatrix(float **matrix, int n) {
+    srand(time(NULL));
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             matrix[i][j] = (float)rand() / RAND_MAX * 10.0f;
