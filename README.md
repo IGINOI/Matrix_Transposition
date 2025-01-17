@@ -1,4 +1,4 @@
-# Exploring Implicit and Explicit Parallelization with Matrix Transposition
+# Exploring Implicit, Explicit (OPENMP) and MPI Parallelization with Matrix Transposition
 
 ## Table of Contents
 
@@ -8,8 +8,9 @@
 - [Files Explanation](#files-explanation)
 - [Contact](#contact)
 
-## Replication
-For both the first and the second part of the project I worked on two different environment. I used a Windows system (the one mounted on my machine) with the objective of debugging and testing the codes, while a Linux one (the one mounted on the UNITN Cluster) with the objective of collecting actual data for the project. Here below you can find the instructions to replicate both the environments. 
+## Repository Structure and Description
+The repository is the result of the merge of two parts of a project. The first part is about trying to using OPENMP to optimize a matrix transposition sequential code, while the second part is about using MPI to do reach the same goal.\
+During the first part of the project the codes where debugged and tested on a windows machine and the UNITN cluster was eventually used to collect final data. On the other hand, the second part was brough entirely on on the cluster, nevertheless, below, it is possible to find environmental specifications for both the machines.
 
 ### Windows Machine
 * Hardware:
@@ -39,14 +40,16 @@ For both the first and the second part of the project I worked on two different 
 * Software Environment
     * Compiler: GCC 9.1
 
-## Files Explanation, Compilation and Run instructions
+## Files Explanation & Code Usage Intructions for Replication
 In order to compile and run the files you have two different choices. If you are in the cluster you can use the MainScript.pbs, alternatively you can run the file that you are interested in separately.
 * PBS files for Cluster
     * [OpenMP.pbs](OpenMP.pbs)
         * This is the file that you have to use to compile and run all the codes that are used to analyze the Implicit and Explicit Optimization on the cluster in one shot. It is widely commented so it should be easy to use it.
         * Utilization: qsub -q short_cpuQ OpenMP.pbs
     * [MPI.pbs](MPI.pbs)
-        * This is the file that you have to use to compile and run all the codes that are used to analyze MPI directives and characteristics on the cluster in one shot. It is widely commented so it should be easy to use it.
+        * This is the file that you have to use to compile and run all the codes that are used to analyze MPI directives and characteristics on the cluster in one shot.\
+        To be clear, it is divided into 2 parts, the first analyzing matrix transposition and the second analyzing matrix symmetry check. Each of these two sections is further divided into 4 additional ones: the first one used explore the effect of using different matrix sizes with different amounts of processes, the second one used to run the sequential baseline and the OPENMP code to have a comparison, the third one used for the strong scaling and the last one for the weak scaling.\
+        Moreover at the start, all the information about the cluster architectures are printed out.
         * Utilization: qsub -q short_cpuQ MPI.pbs
 * Matrix Transposition files
     * [transposition_seq.c](transposition_seq.c):
@@ -73,6 +76,10 @@ In order to compile and run the files you have two different choices. If you are
         * description: this file contains the code to look how different numbers of thread influence on the execution time.
         * compilation: gcc transposition_openmp_threadsv.c -fopenmp.
         * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
+    * [transposition_MPI_blocks.c](transposition_MPI_blocks.c)
+        * description: this file contains MPI solution to the problem. The technique used is by rows distribution of the matrix.
+        * compilation: mpicc -o transposition_MPI_blocks transposition_MPI_blocks.c.
+        * run: mpirun -np 4 ./transposition_MPI_blocks 12.
 * Matrix Symmetry Check files
     * [sym_check_seq.c](sym_check_seq.c): 
         * description: this file contains the sequential code for the matrix symmetry check.
@@ -98,6 +105,15 @@ In order to compile and run the files you have two different choices. If you are
         * description: this file contains the code to look how different numbers of thread influence on the execution time.
         * compilation: gcc sym_check_openmp_threadsv.c -fopenmp.
         * run: .\a.exe 4 -> .\a.exe 12 or ./a.out 4 -> ./a.out 12.
+    * [sym_check_MPI.c](sym_check_MPI.c):
+        * description: this file contains MPI solution to the problem by means of a MPI_Bcast directive.
+        * compilation: mpicc  sym_check_MPI.c.
+        * run: mpirun -np 4 ./a.out 12.
+    * [sym_check_MPI_blocks.c](sym_check_MPI_blocks.c):
+        * description: this file contains an aptempt to use MPI to solve the problem by scattering around first the rows and then the columns of the matrix.
+        * compilation: mpicc  sym_check_MPI_blocks.c.
+        * run: mpirun -np 4 ./a.out 12.
+        * note: this file is the only file that does not work, its porpuse is to show the idea of the technique I explored in trying to make it work.
 
  
 ## Contact
