@@ -16,6 +16,7 @@
 void initializeMatrix(float **matrix, int n);
 void printMatrix(float **matrix, int n);
 int matrixActuallyTransposed(float **matrix, float **transpose, int n);
+void matTranspose(float *M_flat, int matrix_size, float *local_matrix, float **local_transpose, int rank, int *elements_per_process, int *scatter_displs, int *gather_displs, int *rows_per_process, float **T);
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
@@ -122,55 +123,7 @@ int main(int argc, char *argv[]) {
         // Process synchronization befor starting transposition
         double start_time = MPI_Wtime();
 
-        MPI_Scatterv(M_flat, elements_per_process, scatter_displs, MPI_FLOAT, local_matrix, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
-
-
-        // Printing local matrices to see if they are correctly distributed
-        // for (int i = 0; i < size; i++) {
-        //     if (rank == i) {
-        //         printf("Rank %d\n", rank);
-        //         for (int i = 0; i < rows_per_process[rank]; i++) {
-        //             for (int j = 0; j < matrix_size; j++) {
-        //                 printf("%6.2f", local_matrix[i * matrix_size + j]);
-        //             }
-        //             printf("\n");
-        //         }
-        //     }
-        //     MPI_Barrier(MPI_COMM_WORLD);
-        // }
-
-
-        // ------------------------------------------------ //
-        // ---------- LOCAL MATRIX TRANSPOSITION ---------- //
-        // ------------------------------------------------ //
-        for (int i = 0; i < matrix_size; i++) {
-            for (int j = 0; j < rows_per_process[rank]; j++) {
-                local_transpose[i][j] = local_matrix[j * matrix_size + i];
-            }
-        }
-        
-        // Printing local transposed matrices to see if they are correctly transposed
-        // for (int i = 0; i < size; i++) {
-        //     if (rank == i) {
-        //         printf("Rank %d\n", rank);
-        //         for (int i = 0; i < matrix_size; i++) {
-        //             for (int j = 0; j < rows_per_process[rank]; j++) {
-        //                 printf("%6.2f", local_transpose[i][j]);
-        //             }
-        //             printf("\n");
-        //         }
-        //     }
-        //     MPI_Barrier(MPI_COMM_WORLD);
-        // }
-
-
-        // ------------------------------------------------ //
-        // -------- GATHERING PARTIAL TRANSPOSITION ------- //
-        // ------------------------------------------------ //
-
-        for(int i = 0; i < matrix_size; i++) {
-            MPI_Gatherv(local_transpose[i], rows_per_process[rank], MPI_FLOAT, T[i], rows_per_process, gather_displs, MPI_FLOAT, 0, MPI_COMM_WORLD);
-        }
+        matTranspose(M_flat, matrix_size, local_matrix, local_transpose, rank, elements_per_process, scatter_displs, gather_displs, rows_per_process, T);
 
         // Synchronize after each repetition
         MPI_Barrier(MPI_COMM_WORLD);
@@ -261,4 +214,56 @@ int matrixActuallyTransposed(float **matrix, float **transpose, int n) {
         }
     }
     return 1;
+}
+
+void matTranspose(float *M_flat, int matrix_size, float *local_matrix, float **local_transpose, int rank, int *elements_per_process, int *scatter_displs, int *gather_displs, int *rows_per_process, float **T) {
+    MPI_Scatterv(M_flat, elements_per_process, scatter_displs, MPI_FLOAT, local_matrix, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
+
+
+    // Printing local matrices to see if they are correctly distributed
+    // for (int i = 0; i < size; i++) {
+    //     if (rank == i) {
+    //         printf("Rank %d\n", rank);
+    //         for (int i = 0; i < rows_per_process[rank]; i++) {
+    //             for (int j = 0; j < matrix_size; j++) {
+    //                 printf("%6.2f", local_matrix[i * matrix_size + j]);
+    //             }
+    //             printf("\n");
+    //         }
+    //     }
+    //     MPI_Barrier(MPI_COMM_WORLD);
+    // }
+
+
+    // ------------------------------------------------ //
+    // ---------- LOCAL MATRIX TRANSPOSITION ---------- //
+    // ------------------------------------------------ //
+    for (int i = 0; i < matrix_size; i++) {
+        for (int j = 0; j < rows_per_process[rank]; j++) {
+            local_transpose[i][j] = local_matrix[j * matrix_size + i];
+        }
+    }
+    
+    // Printing local transposed matrices to see if they are correctly transposed
+    // for (int i = 0; i < size; i++) {
+    //     if (rank == i) {
+    //         printf("Rank %d\n", rank);
+    //         for (int i = 0; i < matrix_size; i++) {
+    //             for (int j = 0; j < rows_per_process[rank]; j++) {
+    //                 printf("%6.2f", local_transpose[i][j]);
+    //             }
+    //             printf("\n");
+    //         }
+    //     }
+    //     MPI_Barrier(MPI_COMM_WORLD);
+    // }
+
+
+    // ------------------------------------------------ //
+    // -------- GATHERING PARTIAL TRANSPOSITION ------- //
+    // ------------------------------------------------ //
+
+    for(int i = 0; i < matrix_size; i++) {
+        MPI_Gatherv(local_transpose[i], rows_per_process[rank], MPI_FLOAT, T[i], rows_per_process, gather_displs, MPI_FLOAT, 0, MPI_COMM_WORLD);
+    }
 }
