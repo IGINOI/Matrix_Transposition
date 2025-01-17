@@ -16,15 +16,440 @@
 # Number of nodes, cpus, mpi processors and amount of memory
 #PBS -l select=1:ncpus=69:mem=1gb
 
-# Modules for C
+# Modules for python and MPI
 module load gcc91
+module load mpich-3.2.1--gcc-9.1.0
+
 gcc() {
     gcc-9.1.0 "$@"
 }
 gcc --version
+
+
+# Print info about the node
+echo -e "\n##########################"
+echo "### NODE SPECIFICATION ###"
+echo "##########################"
+lscpu
 
 # Select the working directory
 cd /home/davide.facchinelli/PCL/DE2
 
 # Create the directory for the compiled files if it does not already exists
 mkdir -p COMPILED_FILES
+
+# Code compilation transposition with MPI
+mpicc transposition_MPI_blocks.c -o COMPILED_FILES/tra_MPI_blocks
+# Code compilation symmetry check with MPI
+mpicc sym_check_MPI.c -o COMPILED_FILES/sym_check_MPI
+
+
+
+
+
+
+
+
+############################################
+## PART 1 - MATRIX TRANSPOSITION WITH MPI ##
+############################################
+
+#####
+# PART 1.1 -> RUN OF MPI CODE WITH DIFFERENT NUMBER OF PROCESSORS (2 - 4 - 8 - 16 - 32 - 64)
+#####
+
+echo -e "\n#############################################"
+echo "### MPI MATRIX TRANSPOSITION 2 processors ###"
+echo "#############################################"
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 11
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 12
+
+echo -e "\n#############################################"
+echo "### MPI MATRIX TRANSPOSITION 4 processors ###"
+echo "#############################################"
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 11
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 12
+
+echo -e "\n#############################################"
+echo "### MPI MATRIX TRANSPOSITION 8 processors ###"
+echo "#############################################"
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 11
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 12
+
+echo -e "\n#############################################"
+echo "### MPI MATRIX TRANSPOSITION 16 processors ###"
+echo "#############################################"
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 11
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 12
+
+echo -e "\n#############################################"
+echo "### MPI MATRIX TRANSPOSITION 32 processors ###"
+echo "#############################################"
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 11
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 12
+
+echo -e "\n#############################################"
+echo "### MPI MATRIX TRANSPOSITION 64 processors ###"
+echo "#############################################"
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 11
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 12
+
+
+#####
+# PART 1.2 -> RUN OF SEQUENTIAL AND OPENMP CODES FOR COMPARISON
+#####
+
+gcc transposition_seq.c -o COMPILED_FILES/tra_seq -O1 -ftree-loop-vectorize
+echo -e "\n### run for sequential matrix transposition ###"
+./COMPILED_FILES/tra_seq 4
+./COMPILED_FILES/tra_seq 5
+./COMPILED_FILES/tra_seq 6
+./COMPILED_FILES/tra_seq 7
+./COMPILED_FILES/tra_seq 8
+./COMPILED_FILES/tra_seq 9
+./COMPILED_FILES/tra_seq 10
+./COMPILED_FILES/tra_seq 11
+./COMPILED_FILES/tra_seq 12
+
+gcc transposition_openmp.c -o COMPILED_FILES/tra_OPENMP -fopenmp
+echo -e "\n### run for matrix transposition with OPENMP ###"
+./COMPILED_FILES/tra_OPENMP 4
+./COMPILED_FILES/tra_OPENMP 5
+./COMPILED_FILES/tra_OPENMP 6
+./COMPILED_FILES/tra_OPENMP 7
+./COMPILED_FILES/tra_OPENMP 8
+./COMPILED_FILES/tra_OPENMP 9
+./COMPILED_FILES/tra_OPENMP 10
+./COMPILED_FILES/tra_OPENMP 11
+./COMPILED_FILES/tra_OPENMP 12
+
+
+#####
+# PART 1.3 -> RUN FOR STRONG SCALING
+#####
+
+echo -e "\n###############################################################"
+echo "### MPI MATRIX TRANSPOSITION STRONG SCALING WITH 16*16 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 4
+
+
+echo -e "\n###############################################################"
+echo "### MPI MATRIX TRANSPOSITION STRONG SCALING WITH 128*128 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 7
+
+echo -e "\n###############################################################"
+echo "### MPI MATRIX TRANSPOSITION STRONG SCALING WITH 512*512 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 9
+
+echo -e "\n###############################################################"
+echo "### MPI MATRIX TRANSPOSITION STRONG SCALING WITH 4096*4096 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 12
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 12
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 12
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 12
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 12
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 12
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 12
+
+
+
+#####
+# PART 1.4 -> RUN FOR WEAK SCALING
+#####
+
+echo -e "\n########################################################################"
+echo "### MPI MATRIX TRANSPOSITION WEAK SCALING WITH 8 COLUMNS PER PROCESS ###"
+echo "########################################################################"
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 9
+
+echo -e "\n########################################################################"
+echo "### MPI MATRIX TRANSPOSITION WEAK SCALING WITH 16 COLUMNS PER PROCESS ###"
+echo "########################################################################"
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 10
+
+echo -e "\n########################################################################"
+echo "### MPI MATRIX TRANSPOSITION WEAK SCALING WITH 32 COLUMNS PER PROCESS ###"
+echo "########################################################################"
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 2 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 4 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 8 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 16 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 32 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 11
+
+
+
+
+
+
+
+
+
+##############################################
+## RUNNING ALL THE TESTS FOR SYMMETRY CHECK ##
+##############################################
+
+
+#####
+# PART 2.1 -> RUN OF MPI CODE WITH DIFFERENT NUMBER OF PROCESSORS (2 - 4 - 8 - 16 - 32 - 64)
+#####
+
+echo -e "\n\n\n\n#############################################"
+echo "### MPI SYMMETRY CHECK 2 processors ###"
+echo "#############################################"
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 11
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 12
+
+echo -e "\n#############################################"
+echo "### MPI SYMMETRY CHECK 4 processors ###"
+echo "#############################################"
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 11
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 12
+
+echo -e "\n#############################################"
+echo "### MPI SYMMETRY CHECK 8 processors ###"
+echo "#############################################"
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 11
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 12
+
+echo -e "\n#############################################"
+echo "### MPI SYMMETRY CHECK 16 processors ###"
+echo "#############################################"
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 11
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 12
+
+echo -e "\n#############################################"
+echo "### MPI SYMMETRY CHECK 32 processors ###"
+echo "#############################################"
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 11
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 12
+
+echo -e "\n#############################################"
+echo "### MPI SYMMETRY CHECK 64 processors ###"
+echo "#############################################"
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 11
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 12
+
+
+#####
+# PART 1.2 -> RUN OF SEQUENTIAL AND OPENMP CODES FOR COMPARISON
+#####
+
+gcc sym_check_seq.c -o COMPILED_FILES/sym_check_seq -O2
+echo -e "\n### Run of symmetry check in sequential ###"
+./COMPILED_FILES/sym_check_seq 4
+./COMPILED_FILES/sym_check_seq 5
+./COMPILED_FILES/sym_check_seq 6
+./COMPILED_FILES/sym_check_seq 7
+./COMPILED_FILES/sym_check_seq 8
+./COMPILED_FILES/sym_check_seq 9
+./COMPILED_FILES/sym_check_seq 10
+./COMPILED_FILES/sym_check_seq 11
+./COMPILED_FILES/sym_check_seq 12
+
+gcc sym_check_openmp.c -o COMPILED_FILES/sym_check_OPENMP -fopenmp
+echo -e "\n### Run of symmetry check with OPENMP ###"
+./COMPILED_FILES/sym_check_OPENMP 4
+./COMPILED_FILES/sym_check_OPENMP 5
+./COMPILED_FILES/sym_check_OPENMP 6
+./COMPILED_FILES/sym_check_OPENMP 7
+./COMPILED_FILES/sym_check_OPENMP 8
+./COMPILED_FILES/sym_check_OPENMP 9
+./COMPILED_FILES/sym_check_OPENMP 10
+./COMPILED_FILES/sym_check_OPENMP 11
+./COMPILED_FILES/sym_check_OPENMP 12
+
+
+#####
+# PART 1.3 -> RUN FOR STRONG SCALING
+#####
+
+echo -e "\n###############################################################"
+echo "### MPI SYMMETRY CHECK STRONG SCALING WITH 16*16 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 4
+
+
+echo -e "\n###############################################################"
+echo "### MPI SYMMETRY CHECK STRONG SCALING WITH 128*128 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 7
+
+echo -e "\n###############################################################"
+echo "### MPI SYMMETRY CHECK STRONG SCALING WITH 512*512 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 9
+
+echo -e "\n###############################################################"
+echo "### MPI SYMMETRY CHECK STRONG SCALING WITH 4096*4096 MATRIX ###"
+echo "###############################################################"
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 12
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 12
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 12
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 12
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 12
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 12
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 12
+
+
+#####
+# PART 1.4 -> RUN FOR WEAK SCALING
+#####
+
+echo -e "\n########################################################################"
+echo "### MPI SYMMETRY CHECK WEAK SCALING WITH 8 COLUMNS PER PROCESS ###"
+echo "########################################################################"
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 9
+
+echo -e "\n########################################################################"
+echo "### MPI SYMMETRY CHECK WEAK SCALING WITH 16 COLUMNS PER PROCESS ###"
+echo "########################################################################"
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 10
+
+echo -e "\n########################################################################"
+echo "### MPI SYMMETRY CHECK WEAK SCALING WITH 32 COLUMNS PER PROCESS ###"
+echo "########################################################################"
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 2 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 4 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 8 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 16 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 32 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 64 COMPILED_FILES/sym_check_MPI 11
