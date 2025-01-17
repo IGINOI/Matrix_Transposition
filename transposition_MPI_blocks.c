@@ -2,20 +2,19 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <time.h>
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <sys/time.h>
-#endif
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 // %%%%% FUNCTIONS DECLARATION %%%%%% //
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
 
+// Initializes the Matrix with random values
 void initializeMatrix(float **matrix, int n);
+// Prints the Matrix
 void printMatrix(float **matrix, int n);
+// Checks if the Matrix is actually transposed
 int matrixActuallyTransposed(float **matrix, float **transpose, int n);
+// Transposes the Matrix using MPI Scatterv and Gatherv
 void matTranspose(float *M_flat, int matrix_size, float *local_matrix, float **local_transpose, int rank, int *elements_per_process, int *scatter_displs, int *gather_displs, int *rows_per_process, float **T);
 
 
@@ -54,6 +53,13 @@ int main(int argc, char *argv[]) {
     // Number of rows per process
     int base_local_rows = matrix_size / size;
 
+    if( matrix_size < size ) {
+        if(rank == 0) {
+            printf("Matrix size must be greater than or equal to the number of processes.\n");
+        }
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
+
     
     // ------------------------------------------------ //
     //  VARIABLE COMPUTATION FOR SCATTERV AND GATHERV - //
@@ -80,7 +86,6 @@ int main(int argc, char *argv[]) {
     float *M_flat = NULL;
     float **M = (float **)malloc(matrix_size * sizeof(float *));
     float **T = (float **)malloc(matrix_size * sizeof(float *));
-
     if (rank == 0) {
         M_flat = malloc(matrix_size * matrix_size * sizeof(float));
         for (int i = 0; i < matrix_size; i++) {
@@ -91,7 +96,6 @@ int main(int argc, char *argv[]) {
 
     // Matrices for all the ranks
     float *local_matrix = malloc(rows_per_process[rank] * matrix_size * sizeof(float));
-
     float **local_transpose = (float **)malloc(matrix_size * sizeof(float *));
     for (int i = 0; i < matrix_size; i++) {
         local_transpose[i] = (float *)malloc(rows_per_process[rank] * sizeof(float));
@@ -119,8 +123,8 @@ int main(int argc, char *argv[]) {
             }
         }
         
-        MPI_Barrier(MPI_COMM_WORLD);
         // Process synchronization befor starting transposition
+        MPI_Barrier(MPI_COMM_WORLD);
         double start_time = MPI_Wtime();
 
         matTranspose(M_flat, matrix_size, local_matrix, local_transpose, rank, elements_per_process, scatter_displs, gather_displs, rows_per_process, T);
@@ -134,15 +138,13 @@ int main(int argc, char *argv[]) {
         if (rank == 0) {
             total_time += elapsed_time;
 
-            // Check for correct transposition
+            // REMOVE THE COMMENTS BELOW TO CHECK CORRECT TRANSPOSITION
             // if (matrixActuallyTransposed(M, T, matrix_size)) {
             //     printf("Matrix transposed successfully.\n");
             // } else {
             //     printf("Matrix transposition failed.\n");
             // }
         }
-
-        MPI_Barrier(MPI_COMM_WORLD);
     }
 
     // ------------------------------------------------ //
@@ -221,7 +223,7 @@ void matTranspose(float *M_flat, int matrix_size, float *local_matrix, float **l
     MPI_Scatterv(M_flat, elements_per_process, scatter_displs, MPI_FLOAT, local_matrix, rows_per_process[rank] * matrix_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
 
 
-    // Printing local matrices to see if they are correctly distributed
+    // REMOVE THE FOLLOWING COMMENT TO SEE IF THE LOCAL MATRIX IS CORRECTLY RECEIVED
     // for (int i = 0; i < size; i++) {
     //     if (rank == i) {
     //         printf("Rank %d\n", rank);
@@ -245,7 +247,7 @@ void matTranspose(float *M_flat, int matrix_size, float *local_matrix, float **l
         }
     }
     
-    // Printing local transposed matrices to see if they are correctly transposed
+    // REMOVE THE FOLLOWING COMMENT TO SEE IF THE LOCAL MATRIX IS CORRECTLY TRANSPOSED
     // for (int i = 0; i < size; i++) {
     //     if (rank == i) {
     //         printf("Rank %d\n", rank);

@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include <mpi.h>
 #include <time.h>
-#include <unistd.h>
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <sys/time.h>
-#endif
 
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% //
@@ -56,6 +50,18 @@ int main(int argc, char *argv[]) {
     int matrix_size = 1 << exponent;
     int base_local_rows = matrix_size / size;
 
+    if( matrix_size < size ) {
+        if(rank == 0) {
+            printf("Matrix size must be greater than or equal to the number of processes.\n");
+        }
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
+
+
+    // ----------------------------------- //
+    //  VARIABLE COMPUTATION FOR SCATTER - //
+    // ----------------------------------- //
+
     int *start_indexes = NULL;
     int *stop_indexes = NULL;
     int start_index_local;
@@ -93,7 +99,7 @@ int main(int argc, char *argv[]) {
     // ------------------------------------------------ //
 
     //Set the number of interations to have an average time
-    int iterations = 1;
+    int iterations = 50;
     double total_time = 0.0;
 
 
@@ -170,6 +176,7 @@ void initializeSymmetricMatrix(float **matrix, int n) {
             float x = (float)rand() / RAND_MAX * 10.0f;
             matrix[i][j] = x;
             matrix[j][i] = x;
+            //remove the comment if you want to have a non-symmetric matrix and check whether the code works
             //matrix[i][j] = (float)rand() / RAND_MAX * 10.0f;
         }
     }
