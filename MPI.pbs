@@ -55,8 +55,21 @@ mpicc sym_check_MPI.c -o COMPILED_FILES/sym_check_MPI
 ############################################
 
 #####
-# PART 1.1 -> RUN OF MPI CODE WITH DIFFERENT NUMBER OF PROCESSORS (2 - 4 - 8 - 16 - 32 - 64)
+# PART 1.1 -> RUN OF MPI CODE WITH DIFFERENT NUMBER OF PROCESSORS (1 - 2 - 4 - 8 - 16 - 32 - 64)
 #####
+
+echo -e "\n#############################################"
+echo "### MPI MATRIX TRANSPOSITION 1 processor ###"
+echo "#############################################"
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 4
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 5
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 6
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 7
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 8
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 9
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 10
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 11
+mpirun -np 1 COMPILED_FILES/tra_MPI_blocks 12
 
 echo -e "\n#############################################"
 echo "### MPI MATRIX TRANSPOSITION 2 processors ###"
@@ -262,8 +275,21 @@ mpirun -np 64 COMPILED_FILES/tra_MPI_blocks 11
 
 
 #####
-# PART 2.1 -> RUN OF MPI CODE WITH DIFFERENT NUMBER OF PROCESSORS (2 - 4 - 8 - 16 - 32 - 64)
+# PART 2.1 -> RUN OF MPI CODE WITH DIFFERENT NUMBER OF PROCESSORS (1 - 2 - 4 - 8 - 16 - 32 - 64)
 #####
+
+echo -e "\n\n\n\n#############################################"
+echo "### MPI SYMMETRY CHECK 1 processor ###"
+echo "#############################################"
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 4
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 5
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 6
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 7
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 8
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 9
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 10
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 11
+mpirun -np 1 COMPILED_FILES/sym_check_MPI 12
 
 echo -e "\n\n\n\n#############################################"
 echo "### MPI SYMMETRY CHECK 2 processors ###"
